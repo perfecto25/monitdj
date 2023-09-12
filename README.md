@@ -1,4 +1,4 @@
-# Monitbee
+# monitdj
 
 a Django based M/Monit alternative for monitoring hosts using Tildeslash Monit agent
 
@@ -11,16 +11,17 @@ developed on Ubuntu 22.04
 - python3.11-dev (pkg)
 - pipenv (python3.11 -m pip install pipenv)
 - postgres (tested on postgres 14)
+- django 4.2.5
 
 ## DB setup
 
 postgres setup
 
     sudo -u postgres psql
-    postgres=# create user monitbee with password 'monitbee';
-    postgres=# create database mb with encoding 'utf8' owner=monitbee;
+    postgres=# create user monitdj with password 'monitdj';
+    postgres=# create database monitdjdb with encoding 'utf8' owner=monitdj;
     \c mb
-    mb=# alter default privileges grant all on tables to monitbee;
+    mb=# alter default privileges grant all on tables to monitdj;
 
 ## Components
 
@@ -32,8 +33,8 @@ postgres setup
 ### initial setup of project
 
     python3.11 -m pip install django
-    django-admin startproject monitbee
-    cd monitbee
+    django-admin startproject monitdj
+    cd monitdj
     manage.py startapp main
     manage.py migrate
 
