@@ -1,0 +1,20 @@
+[[source]]
+url = "https://pypi.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[packages]
+loguru = "*"
+dictor = "*"
+django-bootstrap-modal-forms = "*"
+django-bootstrap5 = "*"
+django-ninja = "*"
+psycopg2 = "*"
+hypercorn = "*"
+xmltodict = "*"
+
+[dev-packages]
+
+[requires]
+python_version = "3.11"
+python_full_version = "3.11.1"
