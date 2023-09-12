@@ -20,8 +20,8 @@ postgres setup
     sudo -u postgres psql
     postgres=# create user monitdj with password 'monitdj';
     postgres=# create database monitdjdb with encoding 'utf8' owner=monitdj;
-    \c mb
-    mb=# alter default privileges grant all on tables to monitdj;
+    \c monitdjdb
+    monitdjdb=# alter default privileges grant all on tables to monitdj;
 
 ## Components
 
