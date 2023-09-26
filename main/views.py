@@ -8,15 +8,29 @@ from loguru import logger
 from .models import Service, Agent
 
 def index(request):
+    logger.debug(settings.STATIC_ROOT)
+    logger.debug(settings.STATIC_URL)
+    #qs = Agent.objects.select_related().all()
+    agents = {}
     warning = {}
-    #qs = Agent.objects.prefetch_related("service").all()
+    agents["ok"] = {}
+    agents["noresponse"] = {}
     qs = Service.objects.filter(~Q(status=0)).select_related("agent").order_by("agent")
-    for s in qs:
-        logger.debug(s.name)
-        logger.debug(s.agent.name)
+    for svc in qs:
+        if svc.status == 2:
+            logger.error(svc.event)
+            if not svc.agent.name in warning.keys():
+                warning[svc.agent.name] = []
+            warning[svc.agent.name].append(svc)
+
+
+
+    logger.debug(type(warning))
+    logger.debug(warning)
+        #logger.debug(s.agent.name)
     #Service.objects.filter(status=2).select_related()
 
-    context = {"settings": settings, "qs": qs}
+    context = {"settings": settings, "agents": agents, "warning": warning}
 
     return render(request, "index.html", context=context)
 

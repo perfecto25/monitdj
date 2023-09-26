@@ -13,13 +13,15 @@ class Agent(models.Model):
 
 class Service(models.Model):
     name = models.CharField(max_length=40, blank=False, null=False, default="", db_index=True)
-    agent = models.ForeignKey(Agent, on_delete=models.CASCADE)
-    status = models.IntegerField()
-    svc_type = models.IntegerField()
-    monitor = models.IntegerField()
-    data = models.JSONField()
+    agent = models.ForeignKey(Agent, on_delete=models.CASCADE, related_name="service")
+    status = models.IntegerField(blank=True, null=True)
+    state = models.IntegerField(blank=True, null=True)
+    svc_type = models.IntegerField(blank=True, null=True)
+    monitor = models.IntegerField(blank=True, null=True)
+    event = models.CharField(max_length=300, blank=True, null=True)
+    data = models.JSONField(blank=True, null=True)
     class Meta:
         constraints = [models.UniqueConstraint(fields=["name", "agent"], name="unique_match")]
-        
+
     def __unicode__(self):
        return self.name

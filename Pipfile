@@ -10,11 +10,15 @@ django-bootstrap-modal-forms = "*"
 django-bootstrap5 = "*"
 django-ninja = "*"
 psycopg2 = "*"
-hypercorn = "*"
+uvicorn = "*"
 xmltodict = "*"
+hypercorn = {extras = ["trio"], version = "*"}
 
 [dev-packages]
 
 [requires]
 python_version = "3.11"
-python_full_version = "3.11.1"
+
+[scripts]
+app = "python manage.py runserver 0.0.0.0:8000"
+

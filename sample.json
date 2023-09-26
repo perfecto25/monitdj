@@ -1,0 +1,27 @@
+{'monit':
+    {'@id': 'c943df6b60bd5e0e807eeb950e7929fa', '@incarnation': '1695704460', '@version': '5.31.0',
+        'server': {'uptime': '0', 'poll': '5', 'startdelay': '0', 'localhostname': 'mrxmini', 'controlfile': '/home/mreider/dev/python/monitdj/monit.conf',
+            'httpd': {'address': '127.0.0.1', 'port': '19841', 'ssl': '0'
+            }, 'credentials': {'username': 'monit', 'password': 'monit'
+            }
+        }, 'platform': {'name': 'Linux', 'release': '5.15.0-84-generic', 'version': '#93-Ubuntu SMP Tue Sep 5 17: 16: 10 UTC 2023', 'machine': 'x86_64', 'cpu': '16', 'memory': '32264172', 'swap': '7757820'
+        }, 'services': {'service': [
+                {'@name': 'ssd1', 'type': '0', 'collected_sec': '1695704460', 'collected_usec': '286309', 'status': '0', 'status_hint': '0', 'monitor': '1', 'monitormode': '0', 'onreboot': '0', 'pendingaction': '0', 'fstype': 'ext4', 'fsflags': 'rw,relatime', 'mode': '710', 'uid': '1000', 'gid': '1000', 'block': {'percent': '62.8', 'usage': '297495.6', 'total': '473996.3'
+                    }, 'inode': {'percent': '3.3', 'usage': '1018612', 'total': '30892032'
+                    }, 'read': {'bytes': {'count': '0', 'total': '310100992'
+                        }, 'operations': {'count': '0', 'total': '46176'
+                        }
+                    }, 'write': {'bytes': {'count': '0', 'total': '198111232'
+                        }, 'operations': {'count': '0', 'total': '38438'
+                        }
+                    }, 'servicetime': {'read': '0.000', 'write': '0.000'
+                    }
+                },
+                {'@name': 'mrxmini', 'type': '5', 'collected_sec': '1695704460', 'collected_usec': '245220', 'status': '2', 'status_hint': '0', 'monitor': '2', 'monitormode': '0', 'onreboot': '0', 'pendingaction': '0'
+                }
+            ]
+        }, 'servicegroups': None, 'event': {'collected_sec': '1695704460', 'collected_usec': '286311', 'service': 'mrxmini', 'type': '5', 'id': '2', 'state': '1', 'action': '1', 'message': 'mem usage of 78.7% matches resource limit [mem usage > 5.0%
+            ]'
+        }
+    }
+}

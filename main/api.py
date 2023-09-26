@@ -1,7 +1,8 @@
 from ninja import NinjaAPI
 from ninja.security import django_auth
 from asgiref.sync import sync_to_async
-
+from django.db import DatabaseError, Error, IntegrityError, OperationalError
+import asyncio
 from loguru import logger
 import json
 import xmltodict
@@ -16,13 +17,40 @@ api = NinjaAPI(csrf=False)
 agents = Agent.objects.all().select_related()
 
 
-async def save_svc(name, status, monitor, svc_data, svc_type, agent):
-    # update or create a service record
-    logger.warning(agent)
-    logger.warning(name)
-    logger.warning(svc_data)
+@sync_to_async
+def save_agent(monit_id, name):
     try:
-        svc = await Service.objects.get(name=name, agent=agent)
+        agent = Agent.objects.get(pk=monit_id)
+    except Agent.DoesNotExist:
+        agent = Agent(name=name, monit_id=monit_id)
+        agent.save()
+    except (DatabaseError, Error, IntegrityError, OperationalError) as exception:
+        logger.error(exception)
+    return agent
+
+@sync_to_async
+def monit_svc(agent):
+    """ create Monit service - up/down of agent """
+    try:
+        monit = Service.objects.get(agent=agent, name="Monit")
+    except Service.DoesNotExist:
+        monit = Service(name="Monit", status=1, agent=agent)
+        monit.save()
+    except (DatabaseError, Error, IntegrityError, OperationalError) as exception:
+        logger.error(exception)
+    return monit
+
+@sync_to_async
+def save_svc(name, status, monitor, svc_data, svc_type, agent):
+    # update or create a service record
+    # logger.warning(agent)
+    # logger.warning(name)
+    # logger.warning(svc_data)
+    # logger.warning(event)
+    # logger.warning("-----------------")
+
+    try:
+        svc = Service.objects.get(name=name, agent=agent)
         svc.status = status
         svc.monitor = monitor
         svc.data = svc_data
@@ -31,19 +59,38 @@ async def save_svc(name, status, monitor, svc_data, svc_type, agent):
         svc = Service(name=name, agent=agent, svc_type=svc_type, status=status, monitor=monitor, data=svc_data)
         svc.save()
 
+
+
+@sync_to_async
+def save_event(svc_name, event, state, agent):
+    logger.debug(svc_name)
+    logger.debug(event)
+    logger.debug(agent)
+    logger.debug(state)
+    # update or create a service Event record
+    try:
+        svc = Service.objects.get(name=svc_name, agent=agent)
+        if event:
+            svc.event = event
+            svc.state = state
+        svc.save()
+    except Service.DoesNotExist:
+        raise "Error service does not exist"
+        #svc = Service(name=name, agent=agent, svc_type=svc_type, status=status, monitor=monitor, data=svc_data)
+        #svc.save()
+
 @api.post("/collector")
 async def collector(request):
+    logger.success(request.body)
     json_data = json.loads(json.dumps(xmltodict.parse(request.body)))
     logger.info(json_data)
     monit_id = D(json_data, "monit.@id")
     name = D(json_data, "monit.server.localhostname")
     # create new agent record if non existent
-    try:
-        agent = Agent.objects.get(pk=monit_id)
-    except Agent.DoesNotExist:
-        agent = Agent(name=name, monit_id=monit_id)
-        agent.save()
+    agent = await save_agent(monit_id, name)
+    monit = await monit_svc(agent)
 
+    #logger.warning(agent)
     if D(json_data, "monit.services.service"):
         # if list of services
         if isinstance(D(json_data, "monit.services.service"), list):
@@ -52,6 +99,7 @@ async def collector(request):
                 svc_type = D(svc_data, "type")
                 status = D(svc_data, "status")
                 monitor = D(svc_data, "monitor")
+     #           logger.debug(agent)
                 await save_svc(name, status, monitor, svc_data, svc_type, agent)
         else:
             # if single service
@@ -60,13 +108,22 @@ async def collector(request):
             svc_type = D(json_data, "monit.services.service.type")
             status = D(json_data, "monit.services.service.status")
             monitor = D(json_data, "monit.services.service.monitor")
-
-            logger.debug(name)
-            logger.debug(svc_type)
-            logger.debug(monitor)
             await save_svc(name, status, monitor, svc_data, svc_type, agent)
 
-    else:
-        return "No services found"
+    # check incoming event messages
+    if D(json_data, "monit.event"):
+        #logger.debug(D(json_data, "monit.event"))
+        event = D(json_data, "monit.event.message")
+        #logger.success(event)
+        #logger.success(agent)
+        svc_name = D(json_data, "monit.event.service")
+        state = D(json_data, "monit.event.state")
+        #logger.debug(state)
+        #svc_state = D(json_data, "monit.event.state")
+        await save_event(svc_name, event, state, agent)
 
+
+
+
+    logger.error("==========================")
     return "collectgor"

@@ -8,10 +8,15 @@ a Django based M/Monit alternative for monitoring hosts using Tildeslash Monit a
 developed on Ubuntu 22.04
 
 - python 3.11
-- python3.11-dev (pkg)
 - pipenv (python3.11 -m pip install pipenv)
 - postgres (tested on postgres 14)
 - django 4.2.5
+
+OS pkgs
+
+- python3.11-dev
+- postgresql postgresql-contrib libpq-dev python3-dev
+
 
 ## DB setup
 
@@ -37,5 +42,9 @@ postgres setup
     cd monitdj
     manage.py startapp main
     manage.py migrate
+    ./manage.py collectstatic --noinput (creates static_pub directory for serving js/css/img)
 
 
+## Prod deploy
+
+    uvicorn monitdj.asgi:application --reload --host 0.0.0.0
