@@ -21,34 +21,18 @@ agents = Agent.objects.all().select_related()
 def save_agent(monit_id, name):
     try:
         agent = Agent.objects.get(pk=monit_id)
+        agent.state = 1
+        agent.save()
     except Agent.DoesNotExist:
-        agent = Agent(name=name, monit_id=monit_id)
+        agent = Agent(name=name, monit_id=monit_id, state=1)
         agent.save()
     except (DatabaseError, Error, IntegrityError, OperationalError) as exception:
         logger.error(exception)
     return agent
 
 @sync_to_async
-def monit_svc(agent):
-    """ create Monit service - up/down of agent """
-    try:
-        monit = Service.objects.get(agent=agent, name="Monit")
-    except Service.DoesNotExist:
-        monit = Service(name="Monit", status=1, agent=agent)
-        monit.save()
-    except (DatabaseError, Error, IntegrityError, OperationalError) as exception:
-        logger.error(exception)
-    return monit
-
-@sync_to_async
 def save_svc(name, status, monitor, svc_data, svc_type, agent):
     # update or create a service record
-    # logger.warning(agent)
-    # logger.warning(name)
-    # logger.warning(svc_data)
-    # logger.warning(event)
-    # logger.warning("-----------------")
-
     try:
         svc = Service.objects.get(name=name, agent=agent)
         svc.status = status
@@ -59,14 +43,13 @@ def save_svc(name, status, monitor, svc_data, svc_type, agent):
         svc = Service(name=name, agent=agent, svc_type=svc_type, status=status, monitor=monitor, data=svc_data)
         svc.save()
 
-
-
 @sync_to_async
 def save_event(svc_name, event, state, agent):
     logger.debug(svc_name)
     logger.debug(event)
     logger.debug(agent)
     logger.debug(state)
+
     # update or create a service Event record
     try:
         svc = Service.objects.get(name=svc_name, agent=agent)
@@ -79,6 +62,15 @@ def save_event(svc_name, event, state, agent):
         #svc = Service(name=name, agent=agent, svc_type=svc_type, status=status, monitor=monitor, data=svc_data)
         #svc.save()
 
+@sync_to_async
+def save_monit_state(state, monit_id):
+    try:
+        agent = Agent.objects.get(pk=monit_id)
+        agent.state = state 
+        agent.save()
+    except (DatabaseError, Error, IntegrityError, OperationalError) as exception:
+        logger.error(exception)
+
 @api.post("/collector")
 async def collector(request):
     logger.success(request.body)
@@ -88,8 +80,7 @@ async def collector(request):
     name = D(json_data, "monit.server.localhostname")
     # create new agent record if non existent
     agent = await save_agent(monit_id, name)
-    monit = await monit_svc(agent)
-
+    
     #logger.warning(agent)
     if D(json_data, "monit.services.service"):
         # if list of services
@@ -112,18 +103,13 @@ async def collector(request):
 
     # check incoming event messages
     if D(json_data, "monit.event"):
-        #logger.debug(D(json_data, "monit.event"))
         event = D(json_data, "monit.event.message")
-        #logger.success(event)
-        #logger.success(agent)
         svc_name = D(json_data, "monit.event.service")
         state = D(json_data, "monit.event.state")
-        #logger.debug(state)
-        #svc_state = D(json_data, "monit.event.state")
-        await save_event(svc_name, event, state, agent)
-
-
-
+        if svc_name == "Monit":
+            await save_monit_state(state, monit_id)
+        else:
+            await save_event(svc_name, event, state, agent)
 
     logger.error("==========================")
     return "collectgor"

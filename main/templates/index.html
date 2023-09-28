@@ -128,8 +128,16 @@
 
                                         <div class="card-body small card bg-default text-black">
                                         {% if warning %}
+                    
+                                        {% for w in warning %}
+                                            {{w.agent.name}}: {{w.name}}
+                                            {% if w.event %}
+                                                {{ w.event }}
+                                            {% endif %}
+                                            <br>
+                                        {% endfor %}
                                         {% for agent, services in warning.items %}
-                                            {{ agent }} --<br>
+                                            <b>{{ agent }}</b> --<br>
                                             {% if services %}
                                             {% for svc in services %}
                                             {{ svc.name }}<br>

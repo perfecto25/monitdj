@@ -9,10 +9,9 @@ dictor = "*"
 django-bootstrap-modal-forms = "*"
 django-bootstrap5 = "*"
 django-ninja = "*"
-psycopg2 = "*"
+#psycopg2 = "*"
 uvicorn = "*"
 xmltodict = "*"
-hypercorn = {extras = ["trio"], version = "*"}
 
 [dev-packages]
 
