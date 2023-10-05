@@ -117,47 +117,35 @@
             <div id="layoutSidenav_content">
                 <main>
                     <div class="container-fluid px-4">
-                        <h1 class="mt-4">Dashboard</h1>
-                        <ol class="breadcrumb mb-4">
-                            <li class="breadcrumb-item active">Dashboard</li>
-                        </ol>
+                        <br>
                         <div class="row">
-                            <div class="col-xl-8 col-md-12">
+                            <div class="col-xl-12">
                                 <div class="card bg-warning text-white mb-4">
                                     <div class="card-title p-3"><b>Warning</b></div>
-
-                                        <div class="card-body small card bg-default text-black">
-                                        {% if warning %}
-                    
+                                        <div class="card-body large card bg-default text-black">
                                         {% for w in warning %}
-                                            {{w.agent.name}}: {{w.name}}
-                                            {% if w.event %}
-                                                {{ w.event }}
-                                            {% endif %}
-                                            <br>
-                                        {% endfor %}
-                                        {% for agent, services in warning.items %}
-                                            <b>{{ agent }}</b> --<br>
-                                            {% if services %}
-                                            {% for svc in services %}
-                                            {{ svc.name }}<br>
-                                                {% if svc.event %}
-                                                {{ svc.event }}<br>
-                                                {% endif %}
-                                            {% endfor %}
-                                            {% endif %}
-
-                                        {% endfor %}
-                                        {% endif %}
-
-
-                                        -----<br>
-
+                                        <div class="card">
+                                            <div class="card-header">
+                                              <b>{{ w.name }}</b>                                            
+                                            </div>
+                                            <ul class="list-group list-group-flush">
+                                            
+                                                {% for svc in w.services %}
+                                                <li class="list-group-item">
+                                                    {{ svc.name }} 
+                                                    {% if svc.event %}
+                                                    {{ svc.event }}
+                                                    {% endif %}
+                                                    <button class="btn btn-primary btn-sm">ack</button>
+                                                </li>
+                                              {% endfor %}
+                                            </ul>
                                         </div>
-
+                                        {% endfor %}
+                                    </div>
                                 </div>
                             </div>
-                            <div class="col-xl-2 col-md-4">
+                            <div class="col-xl-4">
                                 <div class="card bg-success text-white mb-4">
                                     <div class="card-body">OK</div>
                                     <div class="card-footer d-flex align-items-center justify-content-between">
@@ -166,7 +154,7 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-xl-2 col-md-4">
+                            <div class="col-xl-4">
                                 <div class="card bg-secondary text-white mb-4">
                                     <div class="card-body">No response</div>
                                     <div class="card-footer d-flex align-items-center justify-content-between">

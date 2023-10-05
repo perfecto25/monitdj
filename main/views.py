@@ -6,16 +6,7 @@ from django.db.models import Q
 
 from loguru import logger
 from .models import Service, Agent
-
-def show_queryset(queryset):
-    """ show all fields inside a queryset object """
-    if queryset:
-        model = queryset.model
-        fields = model._meta.fields
-        for field in fields:
-            logger.debug(field.name)
-    else:
-        logger.debug("The queryset is empty.")
+from .utils import show_queryset, show_object
 
 def index(request):
     #qs = Agent.objects.select_related().all()
@@ -24,8 +15,13 @@ def index(request):
     agents["ok"] = {}
     agents["down"] = {}
     #qs = Service.objects.filter(~Q(status=0)).select_related("agent").order_by("agent")
-    warning = Service.objects.filter(~Q(agent__state=2), ~Q(status=0)).order_by("agent__name")    
+    #warning = Service.objects.filter(~Q(agent__state=2), ~Q(status=0)).order_by("agent__name")    
+    warning = Agent.objects.filter(~Q(state=2), ~Q(service__status=0)).order_by("name")
+    for agent in warning:
+        agent.services = Service.objects.filter(agent_id=agent.monit_id).all()
 
+#        show_queryset(w)
+#        show_object(w.service)
 #        venue = Event.objects.filter(venue__id=venue_id)
 
  #   qs = Agent.objects.all().select_related().order_by("name")
@@ -38,8 +34,8 @@ def index(request):
     #             warning[svc.agent.name] = []
     #         warning[svc.agent.name].append(svc)
 
-    for svc in warning:
-        logger.error(f"svc name: {svc.name}, svc status: {svc.status}")
+    #for svc in warning:
+    #    logger.error(f"svc name: {svc.name}, svc status: {svc.status}")
 
         # if not svc.agent.name in warning.keys():
         #     warning[svc.agent.name] = []
