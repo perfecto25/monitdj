@@ -15,8 +15,16 @@
         <link href="https://cdn.jsdelivr.net/npm/simple-datatables@7.1.2/dist/style.min.css" rel="stylesheet" />
         <link href="{% static '/css/bootstrap.min.css' %}" rel="stylesheet">
         <link href="{% static '/css/theme.css' %}" rel="stylesheet">
-
         <script src="https://use.fontawesome.com/releases/v6.3.0/js/all.js" crossorigin="anonymous"></script>
+    
+        <script>
+            document.body.addEventListener('htmx:configRequest', (event) => {
+              event.detail.headers['X-CSRFToken'] = '{{ csrf_token }}';
+            })
+        </script>
+    
+    
+    
     </head>
     <body class="sb-nav-fixed">
         <nav class="sb-topnav navbar navbar-expand navbar-dark bg-dark">
@@ -117,58 +125,68 @@
             <div id="layoutSidenav_content">
                 <main>
                     <div class="container-fluid px-4">
-                        <h1 class="mt-4">Dashboard</h1>
-                        <ol class="breadcrumb mb-4">
-                            <li class="breadcrumb-item active">Dashboard</li>
-                        </ol>
+                        <br>    
                         <div class="row">
-                            <div class="col-xl-8 col-md-12">
+                            <div class="col-xl-12">
                                 <div class="card bg-warning text-white mb-4">
                                     <div class="card-title p-3"><b>Warning</b></div>
-
-                                        <div class="card-body small card bg-default text-black">
-                                        {% if warning %}
-                                        {% for agent, services in warning.items %}
-                                            {{ agent }} --<br>
-                                            {% if services %}
-                                            {% for svc in services %}
-                                            {{ svc.name }}<br>
-                                                {% if svc.event %}
-                                                {{ svc.event }}<br>
-                                                {% endif %}
-                                            {% endfor %}
-                                            {% endif %}
-
-                                        {% endfor %}
-                                        {% endif %}
-
-
-                                        -----<br>
-
+                                        <div class="card-body large card bg-default text-black">
+                                        {% for w in warning %}
+                                        <div class="card">
+                                            <div class="card-header">
+                                              <b>{{ w.name }}</b>                                            
+                                            </div>
+                                            <ul class="list-group list-group-flush">
+                                            
+                                                {% for svc in w.services %}
+                                                <li class="list-group-item">
+                                                        {{ svc.name }} 
+                                                        {% if svc.event %}
+                                                        {{ svc.id }}  {{ svc.event }}
+                                                        {% endif %}
+                                                        <button class="btn btn-primary btn-sm ack_btn"
+                                                        hx-get="{% url 'ack_service' svc_id=svc.id %}" 
+                                                        hx-trigger="click" 
+                                                        hx-target=".ack_btn" 
+                                                        hx-swap="OuterHTML">ack
+                                                        </button>   
+                                                </li>
+                                              {% endfor %}
+                                            </ul>
                                         </div>
-
-                                </div>
-                            </div>
-                            <div class="col-xl-2 col-md-4">
-                                <div class="card bg-success text-white mb-4">
-                                    <div class="card-body">OK</div>
-                                    <div class="card-footer d-flex align-items-center justify-content-between">
-                                        <a class="small text-white stretched-link" href="#">View Details</a>
-                                        <div class="small text-white"><i class="fas fa-angle-right"></i></div>
+                                        {% endfor %}
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-xl-2 col-md-4">
-                                <div class="card bg-secondary text-white mb-4">
-                                    <div class="card-body">No response</div>
-                                    <div class="card-footer d-flex align-items-center justify-content-between">
-                                        <a class="small text-white stretched-link" href="#">View Details</a>
-                                        <div class="small text-white"><i class="fas fa-angle-right"></i></div>
+                            <div class="col-xl-4">
+                                <div class="card bg-success text-white mb-4">
+                                    <div class="card-title p-3">OK</div>
+                                    <div class="card-body large card bg-default text-black">
+                                        {% for agent in ok %}
+                                        <div class="card">
+                                            <div class="card-header">
+                                              <b>{{ agent }}</b>                                            
+                                            </div>
+                                        </div>
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-xl-4">
+                                <div class="card bg-danger text-white mb-4">
+                                    <div class="card-title p-3">No Response</div>
+                                    <div class="card-body large card bg-default text-black">
+                                        {% for agent in noresp %}
+                                        <div class="card">
+                                            <div class="card-header">
+                                              <b>{{ agent.name }}</b>                                            
+                                            </div>
+                                        </div>
+                                        {% endfor %}
                                     </div>
                                 </div>
                             </div>
                         </div>
-
 
                 </main>
                 <footer class="py-4 bg-light mt-auto">
@@ -184,7 +202,7 @@
         <script src="{% static 'js/scripts.js' %}"></script>
         <script src="{% static 'js/bootstrap.min.js' %}"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.min.js" crossorigin="anonymous"></script>
-
+        <script src="https://unpkg.com/htmx.org@1.8.5"></script>
         <script src="{% static 'assets/demo/chart-area-demo.js' %}"></script>
         <script src="{% static 'assets/demo/chart-bar-demo.js' %}"></script>
         <script src="{% static 'js/datatables-simple-demo.js' %}"></script>
