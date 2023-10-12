@@ -5,6 +5,7 @@ class Agent(models.Model):
     monit_id = models.UUIDField(primary_key=True, editable=False)
     name = models.CharField(max_length=30, blank=True, null=True)
     state = models.IntegerField(blank=True, null=True)
+    last_checkin = models.DateTimeField(auto_now=True)
     def __unicode__(self):
        return self.name
     class Meta: 
@@ -32,4 +33,4 @@ class Service(models.Model):
 class Ack(models.Model):
     service = models.OneToOneField(Service, on_delete=models.CASCADE, blank=True, null=True, related_name="service_object", db_index=True)
     state = models.BooleanField(default=False) 
-    last_modified = models.DateField(blank=True, null=True)
+    last_modified = models.DateTimeField(auto_now=True)
