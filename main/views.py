@@ -3,20 +3,23 @@ from django.http import HttpResponse
 from django.views.decorators.csrf import csrf_exempt, csrf_protect
 from django.conf import settings
 from django.db.models import Q
-
+import datetime
 from loguru import logger
 from .models import Service, Agent, Ack
 from .utils import show_queryset, show_object
 
 def index(request):
 
-    warning = Agent.objects.filter(~Q(state=2), ~Q(service__status=0)).order_by("name")
+    # 1 min ago
+    current_dt = datetime.datetime.now() - datetime.timedelta(minutes=1)
+
+    warning = Agent.objects.filter(~Q(state=2), ~Q(service__status=0)).filter(last_checkin__gt=current_dt).order_by("name")
     logger.warning(warning)
     # agents with no response (dead)
-    noresp = Agent.objects.filter(state=2).order_by("name")
+    noresp = Agent.objects.filter(Q(state=2) | Q(last_checkin__lt=current_dt)).order_by("name")
     logger.warning(noresp)
     
-    ok = Agent.objects.filter(~Q(state=2), Q(service__status=1)).order_by("name")
+    ok = Agent.objects.filter(~Q(state=2), Q(service__status=1), last_checkin__gt=current_dt).order_by("name")
     logger.warning(ok)
     if warning:
         for agent in warning:
@@ -49,21 +52,19 @@ def index(request):
 
     return render(request, "index.html", context=context)
 
-@csrf_exempt
-def collector(request):
-
-    if request.method == "POST":
-        logger.debug(request.body)
-        return HttpResponse("ok")
-    if request.method == "GET":
-        logger.warning(request)
-
 
 def ack_service(request, svc_id):
     """ acks incoming svc """
     if request.method == "GET":
+        try:
+            ack = Ack.objects.get(service__id=svc_id)
+            if ack:
+                svc.save()
+        except Ack.DoesNotExist:
+            ack = 
+        
         logger.warning(svc_id)
-        qs = Ack.objects.get(service__id=svc_id)
+        
         logger.debug(qs)
         return HttpResponse("akc ack ack")
         
