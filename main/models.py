@@ -28,3 +28,8 @@ class Service(models.Model):
 
     def __unicode__(self):
        return self.name
+
+class Ack(models.Model):
+    service = models.OneToOneField(Service, on_delete=models.CASCADE, blank=True, null=True, related_name="service_object", db_index=True)
+    state = models.BooleanField(default=False) 
+    last_modified = models.DateField(blank=True, null=True)
