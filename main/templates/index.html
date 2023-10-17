@@ -127,6 +127,95 @@
                     <div class="container-fluid px-4">
                         <br>    
                         <div class="row">
+
+                            <div class="col p-2 bg-warning text-white mb-2">
+                                Warning
+                            </div>
+                        </div>
+
+
+                        <table class="table table table-hover">
+                            <tbody>
+                                <tr>
+                                    <td colspan="2">mrxmin</td>
+                                    <td>service 1</td>
+                                </tr>
+                                <tr>
+                                    <td colspan="2">host2</td>
+                                    <td>
+                                        <div class="row border-bottom">
+                                            service1
+                                        </div>
+                                        <div class="row">
+                                            service2
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+
+
+
+                        <div class="row">
+                            <div class="col col-2 p-2 border">
+                                mrxmini
+                            </div>
+                            <div class="col p-2 border">
+                                <!-- for row in services -->
+                                <div class="row">
+                                    <div class="col col-8">
+                                        root - [] 4 space usage 88.5% matches resource limit [space usage > 9.0%] 
+                                    </div>
+                                    <div class="col border-left">
+                                        ack
+                                    </div>
+                                </div>
+                                <hr>
+                                <div class="row">
+                                    <div class="col col-8">
+                                        service 2
+                                    </div>
+                                    <div class="col">
+                                        ack
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+
+
+
+                        <div class="row">
+                            <div class="col col-2 p-2 border">
+                                mrxmini
+                            </div>
+                            <div class="col p-2 border">
+                                <!-- for row in services -->
+                                <div class="row">
+                                    <div class="col col-8">
+                                        root - [] 4 space usage 88.5% matches resource limit [space usage > 9.0%] 
+                                    </div>
+                                    <div class="col border-left">
+                                        ack
+                                    </div>
+                                </div>
+                                <hr>
+                                <div class="row">
+                                    <div class="col col-8">
+                                        service 2
+                                    </div>
+                                    <div class="col">
+                                        ack
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+
+
+
+
+
                             <div class="col-xl-12">
                                 <div class="card bg-warning text-white mb-4">
                                     <div class="card-title p-3"><b>Warning</b></div>
@@ -140,16 +229,31 @@
                                             
                                                 {% for svc in w.services %}
                                                 <li class="list-group-item">
-                                                        {{ svc.name }} 
+
+                                                        {{ svc.name }} - [{{ svc.ack.state }}]
                                                         {% if svc.event %}
                                                         {{ svc.id }}  {{ svc.event }}
                                                         {% endif %}
-                                                        <button class="btn btn-primary btn-sm ack_btn"
+
+                                            
+                                                    <span id="zz_{{svc.id}}">
+                                                        {% if svc.ack.0.state == True %}
+                                                        <button id="btn_{{svc.id}}" class="btn btn-secondary btn-sm ack_btn"
                                                         hx-get="{% url 'ack_service' svc_id=svc.id %}" 
                                                         hx-trigger="click" 
-                                                        hx-target=".ack_btn" 
-                                                        hx-swap="OuterHTML">ack
-                                                        </button>   
+                                                        hx-target="#zz_{{svc.id}}" 
+                                                        hx-swap="OuterHTML">Un-ack
+                                                        </button>
+                                                        {% else %}
+                                                        <button id="btn_{{svc.id}}" class="btn btn-primary btn-sm ack_btn"
+                                                        hx-get="{% url 'ack_service' svc_id=svc.id %}" 
+                                                        hx-trigger="click" 
+                                                        hx-target="#zz_{{svc.id}}" 
+                                                        hx-swap="OuterH TML">Ack
+                                                        </button>
+                                                        {% endif %}
+                                                    </span>
+
                                                 </li>
                                               {% endfor %}
                                             </ul>
