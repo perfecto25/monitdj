@@ -4,7 +4,7 @@ from django.conf.urls.static import static
 from django.conf import settings
 from django.views.decorators.csrf import csrf_exempt
 
-from .views import index, collector, ack_service
+from .views import index, ack_service
 from .api import api
 
 urlpatterns = [

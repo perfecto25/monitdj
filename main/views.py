@@ -3,6 +3,7 @@ from django.http import HttpResponse
 from django.views.decorators.csrf import csrf_exempt, csrf_protect
 from django.conf import settings
 from django.db.models import Q
+from django.urls import reverse
 import datetime
 from loguru import logger
 from .models import Service, Agent, Ack
@@ -23,8 +24,9 @@ def index(request):
     logger.warning(ok)
     if warning:
         for agent in warning:
-            agent.services = Service.objects.filter(agent_id=agent.monit_id).all()
-
+            agent.services = Service.objects.filter(agent_id=agent.monit_id).select_related().all()
+            for svc in agent.services:
+                svc.ack = Ack.objects.filter(service=svc)
 #        show_queryset(w)
 #        show_object(w.service)
 #        venue = Event.objects.filter(venue__id=venue_id)
@@ -55,16 +57,36 @@ def index(request):
 
 def ack_service(request, svc_id):
     """ acks incoming svc """
+
+    try:
+        ack = Ack.objects.get(service__id=svc_id)
+        logger.warning(ack.state)
+        if ack:
+            if ack.state == True:
+                ack.state = False
+                msg = "Ack"
+                color = "primary"
+            else:
+                ack.state = True
+                msg = "Un-Ack"
+                color = "secondary"
+            ack.save()
+    except Ack.DoesNotExist:
+        ack = Ack(state=True, service_id=svc_id)
+        ack.save()
+        msg = "Un-Ack"
+        color = "secondary"
+
+
     if request.method == "GET":
-        try:
-            ack = Ack.objects.get(service__id=svc_id)
-            if ack:
-                svc.save()
-        except Ack.DoesNotExist:
-            ack = 
-        
         logger.warning(svc_id)
-        
-        logger.debug(qs)
-        return HttpResponse("akc ack ack")
+        resp = f"""
+        <button id='btn_{svc_id}'
+        class='btn btn-{color} btn-sm ack_btn' 
+        hx-get='/ack_service/{svc_id}/'
+        hx-trigger='click' 
+        hx-target='#zz_{svc_id}' 
+        hx-swap='InnerHTML'>{msg}
+        </button>"""
+        return HttpResponse(resp)
         
