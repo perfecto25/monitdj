@@ -1,316 +1,59 @@
-{% load static %}
+{% extends "base.html" %}
+
+
 {% load django_bootstrap5 %}
-{% bootstrap_css %}
-{% bootstrap_javascript %}
-{% bootstrap_messages %}
-<!DOCTYPE html>
-<html lang="en">
-    <head>
-        <meta charset="utf-8" />
-        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
-        <meta name="description" content="" />
-        <meta name="author" content="" />
-        <title>Monit DJ (django)</title>
-        <link href="https://cdn.jsdelivr.net/npm/simple-datatables@7.1.2/dist/style.min.css" rel="stylesheet" />
-        <link href="{% static '/css/bootstrap.min.css' %}" rel="stylesheet">
-        <link href="{% static '/css/theme.css' %}" rel="stylesheet">
-        <script src="https://use.fontawesome.com/releases/v6.3.0/js/all.js" crossorigin="anonymous"></script>
-    
-        <script>
-            document.body.addEventListener('htmx:configRequest', (event) => {
-              event.detail.headers['X-CSRFToken'] = '{{ csrf_token }}';
-            })
-        </script>
-    
-    
-    
-    </head>
-    <body class="sb-nav-fixed">
-        <nav class="sb-topnav navbar navbar-expand navbar-dark bg-dark">
-            <!-- Navbar Brand-->
-            <a class="navbar-brand ps-3" href="index.html">MonitDJ</a>
-            <!-- Sidebar Toggle-->
-            <button class="btn btn-link btn-sm order-1 order-lg-0 me-4 me-lg-0" id="sidebarToggle" href="#!"><i class="fas fa-bars"></i></button>
-            <!-- Navbar Search-->
-            <form class="d-none d-md-inline-block form-inline ms-auto me-0 me-md-3 my-2 my-md-0">
-                <div class="input-group">
-                    <input class="form-control" type="text" placeholder="Search for..." aria-label="Search for..." aria-describedby="btnNavbarSearch" />
-                    <button class="btn btn-primary" id="btnNavbarSearch" type="button"><i class="fas fa-search"></i></button>
-                </div>
-            </form>
-            <!-- Navbar-->
-            <ul class="navbar-nav ms-auto ms-md-0 me-3 me-lg-4">
-                <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" id="navbarDropdown" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false"><i class="fas fa-user fa-fw"></i></a>
-                    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
-                        <li><a class="dropdown-item" href="#!">Settings</a></li>
-                        <li><a class="dropdown-item" href="#!">Activity Log</a></li>
-                        <li><hr class="dropdown-divider" /></li>
-                        <li><a class="dropdown-item" href="#!">Logout</a></li>
-                    </ul>
-                </li>
-            </ul>
-        </nav>
-        <div id="layoutSidenav">
-            <div id="layoutSidenav_nav">
-                <nav class="sb-sidenav accordion sb-sidenav-dark" id="sidenavAccordion">
-                    <div class="sb-sidenav-menu">
-                        <div class="nav">
-                            <div class="sb-sidenav-menu-heading">Core</div>
-                            <a class="nav-link" href="index.html">
-                                <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt"></i></div>
-                                Dashboard
-                            </a>
-                            <div class="sb-sidenav-menu-heading">Agents</div>
-                            <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#collapseLayouts" aria-expanded="false" aria-controls="collapseLayouts">
-                                <div class="sb-nav-link-icon"><i class="fas fa-columns"></i></div>
-                                Layouts
-                                <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
-                            </a>
-                            <div class="collapse" id="collapseLayouts" aria-labelledby="headingOne" data-bs-parent="#sidenavAccordion">
-                                <nav class="sb-sidenav-menu-nested nav">
-                                    <a class="nav-link" href="layout-static.html">Static Navigation</a>
-                                    <a class="nav-link" href="layout-sidenav-light.html">Light Sidenav</a>
-                                </nav>
-                            </div>
-                            <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#collapsePages" aria-expanded="false" aria-controls="collapsePages">
-                                <div class="sb-nav-link-icon"><i class="fas fa-book-open"></i></div>
-                                Pages
-                                <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
-                            </a>
-                            <div class="collapse" id="collapsePages" aria-labelledby="headingTwo" data-bs-parent="#sidenavAccordion">
-                                <nav class="sb-sidenav-menu-nested nav accordion" id="sidenavAccordionPages">
-                                    <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#pagesCollapseAuth" aria-expanded="false" aria-controls="pagesCollapseAuth">
-                                        Authentication
-                                        <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
-                                    </a>
-                                    <div class="collapse" id="pagesCollapseAuth" aria-labelledby="headingOne" data-bs-parent="#sidenavAccordionPages">
-                                        <nav class="sb-sidenav-menu-nested nav">
-                                            <a class="nav-link" href="login.html">Login</a>
-                                            <a class="nav-link" href="register.html">Register</a>
-                                            <a class="nav-link" href="password.html">Forgot Password</a>
-                                        </nav>
-                                    </div>
-                                    <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#pagesCollapseError" aria-expanded="false" aria-controls="pagesCollapseError">
-                                        Error
-                                        <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
-                                    </a>
-                                    <div class="collapse" id="pagesCollapseError" aria-labelledby="headingOne" data-bs-parent="#sidenavAccordionPages">
-                                        <nav class="sb-sidenav-menu-nested nav">
-                                            <a class="nav-link" href="401.html">401 Page</a>
-                                            <a class="nav-link" href="404.html">404 Page</a>
-                                            <a class="nav-link" href="500.html">500 Page</a>
-                                        </nav>
-                                    </div>
-                                </nav>
-                            </div>
-                            <div class="sb-sidenav-menu-heading">Addons</div>
-                            <a class="nav-link" href="charts.html">
-                                <div class="sb-nav-link-icon"><i class="fas fa-chart-area"></i></div>
-                                Charts
-                            </a>
-                            <a class="nav-link" href="tables.html">
-                                <div class="sb-nav-link-icon"><i class="fas fa-table"></i></div>
-                                Tables
-                            </a>
-                        </div>
+{% load static %}
+
+{% block content %}
+
+<div class="container-fluid">
+    <div class="shadow-sm p-3 mb-5 bg-body rounded border border-2 border-warning">
+        <div class="card-title m-3"><h4 class="text-warning strong">Warning</h4></div>
+            <div class="card-body large card bg-default text-black" id="warning-section">
+                {% for w in warning %}
+                <div class="row m-1 mb-3 border border-1">
+                    <div class="col col-2 bg-info">
+                        <b>{{ w.name }}</b>
                     </div>
-                    <div class="sb-sidenav-footer">
-                        <div class="small">Logged in as:</div>
-                        Start Bootstrap
-                    </div>
-                </nav>
-            </div>
-            <div id="layoutSidenav_content">
-                <main>
-                    <div class="container-fluid px-4">
-                        <br>    
-                        <div class="row">
-
-                            <div class="col p-2 bg-warning text-white mb-2">
-                                Warning
-                            </div>
-                        </div>
-
-
-                        <table class="table table table-hover">
+                    <div class="col col-8 m-1">
+                        <table class="table table-hover table-bordered table-responsive table-sm">
                             <tbody>
+                                {% for svc in w.services %}
                                 <tr>
-                                    <td colspan="2">mrxmin</td>
-                                    <td>service 1</td>
-                                </tr>
-                                <tr>
-                                    <td colspan="2">host2</td>
+                                    <td>{{ svc.name }}</td>
+                                    {% if svc.event %}
+                                    <td>{{ svc.id }} {{ svc.event }}</td>
+                                    {% endif %}
                                     <td>
-                                        <div class="row border-bottom">
-                                            service1
-                                        </div>
-                                        <div class="row">
-                                            service2
-                                        </div>
+                                    <span id="target_{{svc.id}}">
+                                        {% if svc.ack.0.state == True %}
+                                        <button id="btn_{{svc.id}}" class="btn btn-secondary btn-sm ack_btn"
+                                        hx-get="{% url 'ack_service' svc_id=svc.id %}" 
+                                        hx-trigger="click" 
+                                        hx-target="#target_{{svc.id}}" 
+                                        hx-swap="OuterHTML">Un-ack
+                                        </button>
+                                        {% else %}
+                                        <button id="btn_{{svc.id}}" class="btn btn-primary btn-sm ack_btn"
+                                        hx-get="{% url 'ack_service' svc_id=svc.id %}" 
+                                        hx-trigger="click" 
+                                        hx-target="#target_{{svc.id}}" 
+                                        hx-swap="OuterHTML">Ack
+                                        </button>
+                                        {% endif %}
+                                    </span>
                                     </td>
-                                </tr>
-                            </tbody>
+                                </tr> 
+                                           
+                                {% endfor %}
+
+                              </tbody>
                         </table>
-
-
-
-                        <div class="row">
-                            <div class="col col-2 p-2 border">
-                                mrxmini
-                            </div>
-                            <div class="col p-2 border">
-                                <!-- for row in services -->
-                                <div class="row">
-                                    <div class="col col-8">
-                                        root - [] 4 space usage 88.5% matches resource limit [space usage > 9.0%] 
-                                    </div>
-                                    <div class="col border-left">
-                                        ack
-                                    </div>
-                                </div>
-                                <hr>
-                                <div class="row">
-                                    <div class="col col-8">
-                                        service 2
-                                    </div>
-                                    <div class="col">
-                                        ack
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-
-
-
-                        <div class="row">
-                            <div class="col col-2 p-2 border">
-                                mrxmini
-                            </div>
-                            <div class="col p-2 border">
-                                <!-- for row in services -->
-                                <div class="row">
-                                    <div class="col col-8">
-                                        root - [] 4 space usage 88.5% matches resource limit [space usage > 9.0%] 
-                                    </div>
-                                    <div class="col border-left">
-                                        ack
-                                    </div>
-                                </div>
-                                <hr>
-                                <div class="row">
-                                    <div class="col col-8">
-                                        service 2
-                                    </div>
-                                    <div class="col">
-                                        ack
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-
-
-
-
-
-                            <div class="col-xl-12">
-                                <div class="card bg-warning text-white mb-4">
-                                    <div class="card-title p-3"><b>Warning</b></div>
-                                        <div class="card-body large card bg-default text-black">
-                                        {% for w in warning %}
-                                        <div class="card">
-                                            <div class="card-header">
-                                              <b>{{ w.name }}</b>                                            
-                                            </div>
-                                            <ul class="list-group list-group-flush">
-                                            
-                                                {% for svc in w.services %}
-                                                <li class="list-group-item">
-
-                                                        {{ svc.name }} - [{{ svc.ack.state }}]
-                                                        {% if svc.event %}
-                                                        {{ svc.id }}  {{ svc.event }}
-                                                        {% endif %}
-
-                                            
-                                                    <span id="zz_{{svc.id}}">
-                                                        {% if svc.ack.0.state == True %}
-                                                        <button id="btn_{{svc.id}}" class="btn btn-secondary btn-sm ack_btn"
-                                                        hx-get="{% url 'ack_service' svc_id=svc.id %}" 
-                                                        hx-trigger="click" 
-                                                        hx-target="#zz_{{svc.id}}" 
-                                                        hx-swap="OuterHTML">Un-ack
-                                                        </button>
-                                                        {% else %}
-                                                        <button id="btn_{{svc.id}}" class="btn btn-primary btn-sm ack_btn"
-                                                        hx-get="{% url 'ack_service' svc_id=svc.id %}" 
-                                                        hx-trigger="click" 
-                                                        hx-target="#zz_{{svc.id}}" 
-                                                        hx-swap="OuterH TML">Ack
-                                                        </button>
-                                                        {% endif %}
-                                                    </span>
-
-                                                </li>
-                                              {% endfor %}
-                                            </ul>
-                                        </div>
-                                        {% endfor %}
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-xl-4">
-                                <div class="card bg-success text-white mb-4">
-                                    <div class="card-title p-3">OK</div>
-                                    <div class="card-body large card bg-default text-black">
-                                        {% for agent in ok %}
-                                        <div class="card">
-                                            <div class="card-header">
-                                              <b>{{ agent }}</b>                                            
-                                            </div>
-                                        </div>
-                                        {% endfor %}
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-xl-4">
-                                <div class="card bg-danger text-white mb-4">
-                                    <div class="card-title p-3">No Response</div>
-                                    <div class="card-body large card bg-default text-black">
-                                        {% for agent in noresp %}
-                                        <div class="card">
-                                            <div class="card-header">
-                                              <b>{{ agent.name }}</b>                                            
-                                            </div>
-                                        </div>
-                                        {% endfor %}
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                </main>
-                <footer class="py-4 bg-light mt-auto">
-                    <div class="container-fluid px-4">
-                        <div class="d-flex align-items-center justify-content-between small">
-                            <div class="text-muted">monitbee {{settings.MONITBEE_VERSION}}</div>
-
-                        </div>
                     </div>
-                </footer>
-            </div>
-        </div>
-        <script src="{% static 'js/scripts.js' %}"></script>
-        <script src="{% static 'js/bootstrap.min.js' %}"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.min.js" crossorigin="anonymous"></script>
-        <script src="https://unpkg.com/htmx.org@1.8.5"></script>
-        <script src="{% static 'assets/demo/chart-area-demo.js' %}"></script>
-        <script src="{% static 'assets/demo/chart-bar-demo.js' %}"></script>
-        <script src="{% static 'js/datatables-simple-demo.js' %}"></script>
-        <script src="https://cdn.jsdelivr.net/npm/simple-datatables@7.1.2/dist/umd/simple-datatables.min.js" crossorigin="anonymous"></script>
+                </div>
+                {% endfor %}
+        </div> <!-- warning-section -->
+    </div>
+</div> <!-- container-fluid -->
 
-    </body>
-</html>
+{% endblock %}

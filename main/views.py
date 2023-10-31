@@ -89,4 +89,7 @@ def ack_service(request, svc_id):
         hx-swap='InnerHTML'>{msg}
         </button>"""
         return HttpResponse(resp)
-        
+
+def show_agent_info(request):
+    """ show details information about agent """
+    
