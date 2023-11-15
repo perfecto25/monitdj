@@ -4,7 +4,7 @@ from django.conf.urls.static import static
 from django.conf import settings
 from django.views.decorators.csrf import csrf_exempt
 
-from .views import index, ack_service
+from .views import index, ack_service, test
 from .api import api
 
 urlpatterns = [
@@ -21,6 +21,7 @@ urlpatterns = [
     #path("collector", collector, name="collector"),
     path("api/", api.urls),
     path("ack_service/<int:svc_id>/", ack_service, name="ack_service"),
+    
     #path("collector/", views.api.urls, name="collector")
 #     path("home/", views.home, name="home"),
 #     path("search/<str:target>/", views.search, name="search"),

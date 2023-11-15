@@ -10,12 +10,16 @@ import xmltodict
 from dictor import dictor as D
 from .models import Agent, Service
 
+from django.shortcuts import render
 
 api = NinjaAPI(csrf=False)
 
 #!!!! need way to pull all agent queryset periodically, otherwise will read once during startup, but not update during runtime
 ## if a new agent is added
 agents = Agent.objects.all().select_related()
+
+
+
 
 
 @sync_to_async
@@ -71,6 +75,11 @@ def save_monit_state(state, monit_id):
         agent.save()
     except (DatabaseError, Error, IntegrityError, OperationalError) as exception:
         logger.error(exception)
+
+
+@api.get("/test")
+def test(request):
+    return render(request, "test1.html")
 
 @api.post("/collector")
 async def collector(request):
