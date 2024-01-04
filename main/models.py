@@ -6,6 +6,18 @@ class Agent(models.Model):
     name = models.CharField(max_length=30, blank=True, null=True)
     state = models.IntegerField(blank=True, null=True)
     last_checkin = models.DateTimeField(auto_now=True)
+    monit_version = models.CharField(max_length=30, blank=True, null=True)
+    uptime = models.IntegerField(blank=True, null=True)
+    os_name = models.CharField(max_length=30, blank=True, null=True)
+    os_release = models.CharField(max_length=35, blank=True, null=True)
+    os_version = models.CharField(max_length=40, blank=True, null=True)
+    os_arch = models.CharField(max_length=15, blank=True, null=True)
+    cpu = models.IntegerField(blank=True, null=True)
+    mem = models.IntegerField(blank=True, null=True)
+    swap = models.IntegerField(blank=True, null=True)
+    cycle = models.IntegerField(blank=True, null=True) # polling cycle in seconds
+    
+
     def __unicode__(self):
        return self.name
     class Meta: 

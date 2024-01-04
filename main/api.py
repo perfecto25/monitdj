@@ -10,6 +10,7 @@ import xmltodict
 from dictor import dictor as D
 from .models import Agent, Service
 
+from django.shortcuts import render
 
 api = NinjaAPI(csrf=False)
 
@@ -18,14 +19,40 @@ api = NinjaAPI(csrf=False)
 agents = Agent.objects.all().select_related()
 
 
+
 @sync_to_async
-def save_agent(monit_id, name):
+def save_agent(monit_id, name, data):
     try:
         agent = Agent.objects.get(pk=monit_id)
         agent.state = 1
+        agent.uptime = D(data, "monit.server.uptime")
+        agent.name = name
+        agent.cycle = D(data, "monit.server.poll")
+        agent.monit_version = D(data, "monit.@version")
+        agent.os_name = D(data, "monit.platform.name")
+        agent.os_version = D(data, "monit.platform.version")
+        agent.os_arch = D(data, "monit.platform.machine")
+        agent.os_release = D(data, "monit.platform.release")
+        agent.cpu = D(data, "monit.platform.cpu")
+        agent.mem = D(data, "monit.platform.memory")
+        agent.swap = D(data, "monit.platform.swap")
         agent.save()
     except Agent.DoesNotExist:
-        agent = Agent(name=name, monit_id=monit_id, state=1)
+        agent = Agent(
+            name=name, 
+            monit_id=monit_id, 
+            state=1,
+            cycle=D(data, "monit.server.poll"),
+            monit_version=D(data, "monit_version"),
+            uptime=D(data, "monit.server.uptime"),
+            os_name=D(data, "monit.platform.name"),
+            os_version=D(data, "monit.platform.version"),
+            os_arch=D(data, "monit.platform.machine"),
+            os_release=D(data, "monit.platform.release"),
+            cpu=D(data, "monit.platform.cpu"),
+            mem=D(data, "monit.platform.memory"),
+            swap=D(data, "monit.platform.swap")
+        )
         agent.save()
     except (DatabaseError, Error, IntegrityError, OperationalError) as exception:
         logger.error(exception)
@@ -72,6 +99,11 @@ def save_monit_state(state, monit_id):
     except (DatabaseError, Error, IntegrityError, OperationalError) as exception:
         logger.error(exception)
 
+
+@api.get("/test")
+def test(request):
+    return render(request, "test1.html")
+
 @api.post("/collector")
 async def collector(request):
     #logger.success(request.body)
@@ -80,7 +112,7 @@ async def collector(request):
     monit_id = D(json_data, "monit.@id")
     name = D(json_data, "monit.server.localhostname")
     # create new agent record if non existent
-    agent = await save_agent(monit_id, name)
+    agent = await save_agent(monit_id, name, json_data)
     
     #logger.warning(agent)
     if D(json_data, "monit.services.service"):

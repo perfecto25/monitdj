@@ -82,11 +82,29 @@ def ack_service(request, svc_id):
         logger.warning(svc_id)
         resp = f"""
         <button id='btn_{svc_id}'
-        class='btn btn-{color} btn-sm ack_btn' 
+        class='btn btn-{color} btn-sm agent-btn ack_btn' 
         hx-get='/ack_service/{svc_id}/'
         hx-trigger='click' 
-        hx-target='#zz_{svc_id}' 
-        hx-swap='InnerHTML'>{msg}
+        hx-target='#target_{svc_id}' 
+        hx-swap='OuterHTML'>{msg}
         </button>"""
         return HttpResponse(resp)
-        
+
+#def show_agent_info(request):
+#    """ show details information about agent """
+
+def test(request):
+    return render(request, "test1.html")
+
+
+def agent_detail(request, monit_id):
+    resp = """
+    ok
+    """
+    obj = Agent.objects.get(pk=monit_id)
+    resp = """
+
+    """
+    context = {"obj": obj}
+#    return HttpResponse(monit_id)
+    return render(request, "modal/agent.html", context=context)
