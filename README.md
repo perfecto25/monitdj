@@ -48,3 +48,10 @@ postgres setup
 ## Prod deploy
 
     uvicorn monitdj.asgi:application --reload --host 0.0.0.0
+
+
+# feature list
+
+- allow alert Ack / Unack - if alert is acked, dont send notifications for X amount of time as defined in config
+- allow alert urgency - urgency of 1 will notify every 5 min, urg2 every 15 min , urg3 every 30 min etc
+- 

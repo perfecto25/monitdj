@@ -9,91 +9,83 @@
 <div class="row">
 
     <!-- WARNING -->
-    <div class="shadow-sm col p-4 mb-5 bg-body rounded border border-2 border-warning">
-        <div class="card-title m-3"><h4 class="text-warning strong">Warnings</h4></div>
-            
+    <div class="shadow-sm col p-4 mb-5 bg-body rounded border">
+        <div class="card-title m-3">
+        Alert
+        </div>
+        {% for agent in warning %}
+        
+        <table class="table table-bordered table-hover border-warning">
+            <tr>
+                <td style="width:160px"
+                    
 
 
-                {% for agent in warning %}
-
-
-                <div class="card shadow shadow-sm agent-info p-2 border-warning-subtle">
-                <div class="row">
-                    <div class="col">
-                        <div class="badge text-bg-info">{{ agent.name }}</div>
-                    </div>
-                </div>
-                <div class="btn btn-bs-orange">AADDD</div>
+                    hx-get="{% url 'agent_detail' monit_id=agent.monit_id %}"
+                    hx-target="#modal-body-area"
+                    hx-swap="OuterHTML"
+                    hx-trigger="click"
+                    data-bs-toggle="modal" data-bs-target="#basemodal">
+                    {{ agent.name }}
+                </td>
+                <td>                
+                <table class="table table-sm">
                 {% for svc in agent.services %}
-                <div class="row">
-                    <div class="col-8">
-                        [{{ svc.name }}] {{ svc.event }}
-                    </div>
-
-                    <div class="col">
-                        {% if svc.ack.0.state == True %}
-                        <button id="btn_{{svc.id}}" class="btn btn-secondary btn-sm agent-btn ack_btn"
-                        hx-get="{% url 'ack_service' svc_id=svc.id %}" 
-                        hx-trigger="click" 
-                        hx-target="#target_{{svc.id}}" 
-                        hx-swap="OuterHTML">Un-ack
-                        </button>
-                        {% else %}
-                        <button id="btn_{{svc.id}}" class="btn btn-primary btn-sm ack_btn"
-                        hx-get="{% url 'ack_service' svc_id=svc.id %}" 
-                        hx-trigger="click" 
-                        hx-target="#target_{{svc.id}}" 
-                        hx-swap="OuterHTML">Ack
-                        </button>
-                        {% endif %}
-                    </div>
-                </div>
-                {% endfor %}
-                </div>
-
-
-
-
-
-
-                <div class="row m-1 mb-3">
-                    <div class="col-flex">
-                        <b>{{ agent.name }}</b>
-                    </div>
-                    <div class="col m-1">
-                        <table class="table table-hover table-bordered table-responsive table-sm agent-info">
-                            <tbody>
-                                {% for svc in agent.services %}
-                                <tr>
-                                    <td>{{ svc.name }}</td>
-                                    {% if svc.event %}
-                                    <td>{{ svc.id }} {{ svc.event }}</td>
-                                    {% endif %}
-                                    <td>
-                                    <span id="target_{{svc.id}}">
-                                        {% if svc.ack.0.state == True %}
-                                        <button id="btn_{{svc.id}}" class="btn btn-secondary btn-sm agent-btn ack_btn"
-                                        hx-get="{% url 'ack_service' svc_id=svc.id %}" 
-                                        hx-trigger="click" 
-                                        hx-target="#target_{{svc.id}}" 
-                                        hx-swap="OuterHTML">Un-ack
-                                        </button>
-                                        {% else %}
-                                        <button id="btn_{{svc.id}}" class="btn btn-primary btn-sm ack_btn"
-                                        hx-get="{% url 'ack_service' svc_id=svc.id %}" 
-                                        hx-trigger="click" 
-                                        hx-target="#target_{{svc.id}}" 
-                                        hx-swap="OuterHTML">Ack
-                                        </button>
-                                        {% endif %}
-                                    </span>
-                                    </td>
-                                </tr> 
-                                {% endfor %}
-                              </tbody>
+                    <tr >
+                        <td>{{svc.name}}</td>
+                        {% if svc.event %}
+                        <td>{{svc.id}} {{svc.event}}</td>
+                        <td>
+                            <span id="target_{{svc.id}}">
+                            {% if svc.ack.0.state == True %}
+                                <button id="btn_{{svc.id}}" class="btn btn-secondary btn-sm agent-btn ack_btn"
+                                    hx-get="{% url 'ack_service' svc_id=svc.id %}" 
+                                    hx-trigger="click" 
+                                    hx-target="#target_{{svc.id}}" 
+                                    hx-swap="OuterHTML">Un-ack
+                                </button>
+                            {% else %}
+                                <button id="btn_{{svc.id}}" class="btn btn-primary btn-sm ack_btn"
+                                    hx-get="{% url 'ack_service' svc_id=svc.id %}" 
+                                    hx-trigger="click" 
+                                    hx-target="#target_{{svc.id}}" 
+                                    hx-swap="OuterHTML">Ack
+                                </button>
+                            {% endif %}
+                            </span>
+                        </td>
+                    {% endif %}
+                            </tr>
+                            {% endfor %}
                         </table>
-                    </div>
-                </div>
+                    </td>
+                </tr>
+                </table>
+
+
+
+
+
+                <table class="table table-bordered table-hover border-warning">
+                    <tr>
+                        <td style="width:160px" >
+                            Agent
+                        </td>
+                        <td>
+                            <table class="table table-sm">
+                                <tr>
+                                    <td>service 1</td>
+                                    <td>btn1</td>
+                                </tr>
+                                <tr>
+                                    <td>service 2</td>
+                                    <td>btn2 </td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+                    </table>
+
                 {% endfor %}
                 
     </div><!-- warning-section -->
@@ -110,4 +102,7 @@
         </div>
     </div> <!-- no resp -->
 </div>
+
+{% include "modal/basemodal.html" %}
+
 {% endblock %}
