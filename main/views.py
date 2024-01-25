@@ -102,9 +102,10 @@ def agent_detail(request, monit_id):
     ok
     """
     obj = Agent.objects.get(pk=monit_id)
+    services = Service.objects.filter(agent_id=monit_id)
     resp = """
 
     """
-    context = {"obj": obj}
+    context = {"obj": obj, "services": services}
 #    return HttpResponse(monit_id)
     return render(request, "modal/agent.html", context=context)

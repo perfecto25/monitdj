@@ -96,7 +96,7 @@ def save_monit_state(state, monit_id):
         agent = Agent.objects.get(pk=monit_id)
         agent.state = state 
         agent.save()
-    except (DatabaseError, Error, IntegrityError, OperationalError) as exception:
+    except (DatabaseError, Error, IntegrityError, OperationaError) as exception:
         logger.error(exception)
 
 
@@ -114,8 +114,13 @@ async def collector(request):
     # create new agent record if non existent
     agent = await save_agent(monit_id, name, json_data)
     
-    #logger.warning(agent)
+
     if D(json_data, "monit.services.service"):
+        # delete all services that are not fresh for this agent ID
+#        service_names = D(json_data, "monit.services.service", search="@name")
+#        qs = Service.objects.get(agent_id=monit_id)
+
+
         # if list of services
         if isinstance(D(json_data, "monit.services.service"), list):
             for svc_data in D(json_data, "monit.services.service"):
