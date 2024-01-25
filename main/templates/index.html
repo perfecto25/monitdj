@@ -10,17 +10,21 @@
 
     <!-- WARNING -->
     <div class="shadow-sm col p-4 mb-5 bg-body rounded border">
-        <div class="card-title m-3">
-        Alert
-        </div>
-        {% for agent in warning %}
-        
+        <table class="table table-bordered table-hover border-warning">
+            <tr>
+                <td style="width:160px" class="text-bg-warning p-2">
+                    <b>Agent</b>
+                </td>
+                <td>
+                    svc
+                </td>
+            </tr>
+        </table>
+
+        {% for agent in warning %}        
         <table class="table table-bordered table-hover border-warning">
             <tr>
                 <td style="width:160px"
-                    
-
-
                     hx-get="{% url 'agent_detail' monit_id=agent.monit_id %}"
                     hx-target="#modal-body-area"
                     hx-swap="OuterHTML"
@@ -45,7 +49,7 @@
                                     hx-swap="OuterHTML">Un-ack
                                 </button>
                             {% else %}
-                                <button id="btn_{{svc.id}}" class="btn btn-primary btn-sm ack_btn"
+                                <button id="btn_{{svc.id}}" class="btn btn-primary btn-sm agent-btn ack_btn"
                                     hx-get="{% url 'ack_service' svc_id=svc.id %}" 
                                     hx-trigger="click" 
                                     hx-target="#target_{{svc.id}}" 
@@ -63,13 +67,10 @@
                 </table>
 
 
-
-
-
                 <table class="table table-bordered table-hover border-warning">
                     <tr>
                         <td style="width:160px" >
-                            Agent
+                            Agent2
                         </td>
                         <td>
                             <table class="table table-sm">
