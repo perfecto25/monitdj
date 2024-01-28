@@ -1,108 +1,61 @@
 {% extends "base.html" %}
-
-
-{% load django_bootstrap5 %}
 {% load static %}
-
 {% block content %}
 
-<div class="row">
-
-    <!-- WARNING -->
-    <div class="shadow-sm col p-4 mb-5 bg-body rounded border">
-        <table class="table table-bordered table-hover border-warning">
-            <tr>
-                <td style="width:160px" class="text-bg-warning p-2">
-                    <b>Agent</b>
-                </td>
-                <td>
-                    svc
-                </td>
-            </tr>
-        </table>
-
-        {% for agent in warning %}        
-        <table class="table table-bordered table-hover border-warning">
-            <tr>
-                <td style="width:160px"
-                    hx-get="{% url 'agent_detail' monit_id=agent.monit_id %}"
-                    hx-target="#modal-body-area"
-                    hx-swap="OuterHTML"
-                    hx-trigger="click"
-                    data-bs-toggle="modal" data-bs-target="#basemodal">
-                    {{ agent.name }}
-                </td>
-                <td>                
-                <table class="table table-sm">
-                {% for svc in agent.services %}
-                    <tr >
-                        <td>{{svc.name}}</td>
-                        {% if svc.event %}
-                        <td>{{svc.id}} {{svc.event}}</td>
-                        <td>
-                            <span id="target_{{svc.id}}">
-                            {% if svc.ack.0.state == True %}
-                                <button id="btn_{{svc.id}}" class="btn btn-secondary btn-sm agent-btn ack_btn"
-                                    hx-get="{% url 'ack_service' svc_id=svc.id %}" 
-                                    hx-trigger="click" 
-                                    hx-target="#target_{{svc.id}}" 
-                                    hx-swap="OuterHTML">Un-ack
-                                </button>
-                            {% else %}
-                                <button id="btn_{{svc.id}}" class="btn btn-primary btn-sm agent-btn ack_btn"
-                                    hx-get="{% url 'ack_service' svc_id=svc.id %}" 
-                                    hx-trigger="click" 
-                                    hx-target="#target_{{svc.id}}" 
-                                    hx-swap="OuterHTML">Ack
-                                </button>
-                            {% endif %}
-                            </span>
-                        </td>
-                    {% endif %}
-                            </tr>
-                            {% endfor %}
-                        </table>
-                    </td>
-                </tr>
-                </table>
-
-
-                <table class="table table-bordered table-hover border-warning">
-                    <tr>
-                        <td style="width:160px" >
-                            Agent2
-                        </td>
-                        <td>
-                            <table class="table table-sm">
-                                <tr>
-                                    <td>service 1</td>
-                                    <td>btn1</td>
-                                </tr>
-                                <tr>
-                                    <td>service 2</td>
-                                    <td>btn2 </td>
-                                </tr>
-                            </table>
-                        </td>
-                    </tr>
-                    </table>
-
-                {% endfor %}
-                
-    </div><!-- warning-section -->
-
-    <div class="col-sm-4">
-        <div class="shadow-sm p-3 mb-5 bg-body rounded border border-2 border-secondary">
-            <div class="card-title m-3"><h4 class="text-secondary strong">No response</h4></div>
-                <div class="card-body large card bg-default text-black" id="warning-section">
-                    {% for agent in noresp %}
-                    {{ agent.name }}
-                    {% endfor %}
-                </div>
-            </div>
-        </div>
-    </div> <!-- no resp -->
+<div class="page-heading">
+  <h3>Dashboard</h3>
 </div>
+
+{% include "quickstatus.html" %}
+
+<div class="page-content">
+  <section class="row">
+    <div class="col col-lg-12">
+      <div class="row">
+        <div class="col col-lg-12 order-md-1 order-last">
+        
+
+          <!-- PROD DASHBOARD -->
+          {% include "prod.html" %}
+
+            <!-- SIM DASHBOARD -->
+            <div class="card">
+              <div class="card-header">
+                  <h4><div class="badge bg-primary">SIM Host Errors</div></h4>
+              </div>
+              <div class="card-body">
+                
+              </div>
+            </div>
+
+
+            <!-- ALL HOSTS DASHBOARD -->
+            <div class="card">
+              <div class="card-header">
+                  <h4><div class="badge bg-primary-subtle">All Service Errors</div></h4>
+              </div>
+              <div class="card-body">
+                
+              </div>
+            </div>
+
+
+            <!-- UNRESPONSIVE DASHBOARD -->
+            <div class="card">
+              <div class="card-header">
+                  <h4><div class="badge bg-secondary">No Response</div></h4>
+              </div>
+              <div class="card-body">
+                
+              </div>
+            </div>
+
+        </div>
+      </div>
+    </div>
+  </section>
+</div> <!-- page content -->
+
 
 {% include "modal/basemodal.html" %}
 

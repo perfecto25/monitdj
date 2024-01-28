@@ -4,7 +4,7 @@ from django.conf.urls.static import static
 from django.conf import settings
 from django.views.decorators.csrf import csrf_exempt
 
-from .views import index, ack_service, test, agent_detail
+from . import views
 from .api import api
 
 urlpatterns = [
@@ -17,11 +17,11 @@ urlpatterns = [
     #path("accounts/signup/", TemplateView.as_view(template_name="account/signup.html"), name="register"),
     #path("accounts/email/", TemplateView.as_view(template_name="account/email.html"), name="email"),
 
-    path("", index, name="index"),
+    path("", views.index, name="index"),
     #path("collector", collector, name="collector"),
     path("api/", api.urls),
-    path("ack_service/<int:svc_id>/", ack_service, name="ack_service"),
-    path("agent_detail/<uuid:monit_id>/", agent_detail, name="agent_detail")
+    path("ack_service/<int:svc_id>/", views.ack_service, name="ack_service"),
+    path("host_detail/<uuid:monit_id>/", views.host_detail, name="host_detail")
     #path("collector/", views.api.urls, name="collector")
 #     path("home/", views.home, name="home"),
 #     path("search/<str:target>/", views.search, name="search"),

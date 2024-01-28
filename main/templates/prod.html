@@ -1,0 +1,48 @@
+{% load static %}
+
+<div class="card">
+  <div class="card-header">
+      <h4><div class="badge bg-danger">PROD Host Errors</div></h4>
+  </div>
+
+  <div class="card p-3">
+  {% if warning %}
+  {% for host in warning %}
+    <div class="p-3 bg-body mb-1">
+      <div class="row p-1">
+        <div class="col">
+          <div class="btn btn-sm btn-info"
+            hx-get="{% url 'host_detail' monit_id=host.monit_id %}"
+            hx-target="#modal-body-area"
+            hx-swap="OuterHTML"
+            hx-trigger="click"
+            data-bs-toggle="modal" data-bs-target="#basemodal">
+          {{host.name}}
+          </div>
+        </div>
+        <div class="col-10">
+        {% if host.service.all %}
+          {% for svc in host.service.all %}
+          <div class="row p-1 rounded mx-auto border border-primary-subtle b mb-1">
+            <div class="col-10">
+            - {{svc.name}} {{svc.event}}<br>
+            </div>
+            <div class="col">
+              button
+            </div>
+          </div>
+          
+          {% endfor %}
+        {% else %}
+        no services
+        {% endif %}
+        </div>
+      </div>
+    </div> <!-- cardbody -->
+  
+{% endfor %}
+{% else %}
+no errors
+{% endif %} 
+  </div> <!-- card --> 
+</div>

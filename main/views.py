@@ -2,31 +2,49 @@ from django.shortcuts import render
 from django.http import HttpResponse
 from django.views.decorators.csrf import csrf_exempt, csrf_protect
 from django.conf import settings
-from django.db.models import Q
+from django.db.models import Q, Count
 from django.urls import reverse
 import datetime
 from loguru import logger
-from .models import Service, Agent, Ack
-from .utils import show_queryset, show_object
+from .models import Service, Host, Ack
+from .utils import show_queryset, show_object, bytesto
+
+#def index(request):
+    #return render(request, "index.html")
 
 def index(request):
 
     # 1 min ago
     current_dt = datetime.datetime.now() - datetime.timedelta(minutes=1)
+    #logger.debug(datetime.datetime.now())
+    logger.debug(current_dt)
 
-    warning = Agent.objects.filter(~Q(state=2), ~Q(service__status=0)).filter(last_checkin__gt=current_dt).order_by("name")
-    logger.warning(warning)
-    # agents with no response (dead)
-    noresp = Agent.objects.filter(Q(state=2) | Q(last_checkin__lt=current_dt)).order_by("name")
-    logger.warning(noresp)
+    #warning = Host.objects.filter(~Q(state=2).exclude(~Q) & Q(service__status=1)).distinct() \
+    #    .filter(last_checkin__gt=current_dt).order_by("name").prefetch_related("service")
     
-    ok = Agent.objects.filter(~Q(state=2), Q(service__status=1), last_checkin__gt=current_dt).order_by("name")
-    logger.warning(ok)
-    if warning:
-        for agent in warning:
-            agent.services = Service.objects.filter(agent_id=agent.monit_id).select_related().all()
-            for svc in agent.services:
-                svc.ack = Ack.objects.filter(service=svc)
+    # get all Hosts that have services with problems (ie, service status != 0), exclude any Host that does not have any problems
+    warning = Host.objects.annotate(nonzero=Count("service", filter=~Q(service__status=0))) \
+        .filter(last_checkin__gt=current_dt).order_by("name").prefetch_related("service").filter(nonzero__gt=0)
+    
+    for h in warning:
+       logger.debug(h.name)
+       logger.success(h.service.all())
+       for svc in h.service.all():
+           logger.success(svc.state)
+    #warning = Service.objects.filter(~Q(status=0)).filter(last_modified__gt=current_dt).select_related("host").order_by("host__name")
+    #warning = Host.objects.filter(~Q(state=2)).filter(last_checkin__gt=current_dt).order_by("name")
+    #logger.error(show_queryset(warning))
+    # agents with no response (dead)
+    #noresp = Host.objects.filter(Q(state=2) | Q(last_checkin__lt=current_dt)).order_by("name")
+    #logger.warning(noresp)
+    
+    # ok = Host.objects.filter(~Q(state=2), Q(service__status=1), last_checkin__gt=current_dt).order_by("name")
+    # logger.warning(ok)
+    # if warning:
+    #     for host in warning:
+    #         host.services = Service.objects.filter(host_id=host.monit_id).select_related().all()
+    #         for svc in host.services:
+    #             svc.ack = Ack.objects.filter(service=svc)
 #        show_queryset(w)
 #        show_object(w.service)
 #        venue = Event.objects.filter(venue__id=venue_id)
@@ -49,8 +67,8 @@ def index(request):
         # warning[svc.agent.name].append(svc)
         #logger.debug(s.agent.name)
     #Service.objects.filter(status=2).select_related()
-    logger.debug(warning)
-    context = {"settings": settings, "warning": warning, "noresp": noresp, "ok": ok}
+    #logger.debug(warning)
+    context = {"settings": settings, "warning": warning}
 
     return render(request, "index.html", context=context)
 
@@ -97,15 +115,19 @@ def test(request):
     return render(request, "test1.html")
 
 
-def agent_detail(request, monit_id):
+
+def host_detail(request, monit_id):
     resp = """
     ok
     """
-    obj = Agent.objects.get(pk=monit_id)
-    services = Service.objects.filter(agent_id=monit_id)
+    host = Host.objects.get(pk=monit_id)
+    services = Service.objects.filter(host_id=monit_id)
+    memory = bytesto(host.mem, 'm')
+    swap = bytesto(host.swap, 'm')
     resp = """
+    
 
     """
-    context = {"obj": obj, "services": services}
+    context = {"obj": host, "services": services, "memory": memory, "swap": swap}
 #    return HttpResponse(monit_id)
-    return render(request, "modal/agent.html", context=context)
+    return render(request, "modal/host.html", context=context)

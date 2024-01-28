@@ -1,0 +1,69 @@
+<div class="p-1 mb-3">
+  <span class="badge badge text-bg-info">{{ obj.name }}</span>
+  {% if obj.state == 1 %}
+  <span class="badge text-bg-success">active</span>
+  {% else %}
+  <span class="badge text-bg-secondary">inactive</span>
+  {% endif %}
+  </div>
+  
+  <ul class="nav nav-tabs mb-3" id="pills-tab" role="tablist">
+    <li class="nav-item" role="presentation">
+      <button class="nav-link active" id="pills-services-tab" data-bs-toggle="pill" data-bs-target="#pills-services" type="button" role="tab" aria-controls="pills-services" aria-selected="false">Services</button>
+    </li>
+    <li class="nav-item" role="presentation">
+      <button class="nav-link" id="pills-info-tab" data-bs-toggle="pill" data-bs-target="#pills-info" type="button" role="tab" aria-controls="pills-info" aria-selected="true">Information</button>
+    </li>
+    <li class="nav-item" role="presentation">
+      <button class="nav-link" id="pills-alerting-tab" data-bs-toggle="pill" data-bs-target="#pills-alerting" type="button" role="tab" aria-controls="pills-alerting" aria-selected="false">Alerting</button>
+    </li>
+  </ul>
+  <div class="tab-content" id="pills-tabContent">
+    
+  
+    <!-- SERVICES -->
+    <div class="tab-pane fade show active" id="pills-services" role="tabpanel" aria-labelledby="pills-services-tab" tabindex="0">
+      {% for svc in services %}
+      {{ svc.name }} {{ svc.event }}<br>
+      {% endfor %}
+    </div>
+    
+    <!-- INFO -->
+    <div class="tab-pane fade" id="pills-info" role="tabpanel" aria-labelledby="pills-info-tab" tabindex="0">
+      <table class="table table-bordered border-primary">
+        <tr>
+          <td>monit</td>
+          <td>
+            <ul>
+              <li>version: {{ obj.monit_version }}</li>
+              <li>last checkin: {{ obj.last_checkin }}</li>
+              <li>cycle: {{ obj.cycle }} seconds</li>
+            </ul>
+          </td>
+        </tr>
+        <tr>
+          <td>OS</td>
+          <td>
+            <ul>
+              <li>{{ obj.os_name }} {{ obj.os_release }} {{ obj.os_arch }}</li>
+              <li>{{ obj.os_version }}</li>
+            </ul> 
+          </td>
+        </tr>
+        <tr>
+          <td>memory</td>
+          <td>RAM {{ memory }} MB<br>Swap {{ swap }} MB</td>
+        </tr>
+        <tr>
+          <td>cpu</td>
+          <td>{{ obj.cpu }}</td>
+        </tr>
+      </table>
+    </div>
+  
+    <!-- ALERTING -->
+    <div class="tab-pane fade" id="pills-alerting" role="tabpanel" aria-labelledby="pills-alerting-tab" tabindex="0">
+      Alerting
+    </div>
+  
+  </div>

@@ -1,0 +1,44 @@
+ <table class="table table-bordered table-hover border-warning">
+      <tr>
+          <td style="width:160px"
+              hx-get="{% url 'host_detail' monit_id=host.monit_id %}"
+              hx-target="#modal-body-area"
+              hx-swap="OuterHTML"
+              hx-trigger="click"
+              data-bs-toggle="modal" data-bs-target="#basemodal">
+              {{ host.name }}
+          </td>
+
+            
+          <table class="table table-sm">
+          {% for svc in host.services %}
+              <tr >
+                  <td>{{svc.name}}</td>
+                  {% if svc.event %}
+                  <td>{{svc.id}} {{svc.event}}</td>
+                  <td>
+                      <span id="target_{{svc.id}}">
+                      {% if svc.ack.0.state == True %}
+                          <button id="btn_{{svc.id}}" class="btn btn-secondary btn-sm agent-btn ack_btn"
+                              hx-get="{% url 'ack_service' svc_id=svc.id %}" 
+                              hx-trigger="click" 
+                              hx-target="#target_{{svc.id}}" 
+                              hx-swap="OuterHTML">Un-ack
+                          </button>
+                      {% else %}
+                          <button id="btn_{{svc.id}}" class="btn btn-primary btn-sm agent-btn ack_btn"
+                              hx-get="{% url 'ack_service' svc_id=svc.id %}" 
+                              hx-trigger="click" 
+                              hx-target="#target_{{svc.id}}" 
+                              hx-swap="OuterHTML">Ack
+                          </button>
+                      {% endif %}
+                      </span>
+                  </td>
+              {% endif %}
+                      </tr>
+                      {% endfor %}
+                  </table>
+              </td>
+          </tr>
+          </table>

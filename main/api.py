@@ -8,7 +8,7 @@ from loguru import logger
 import json
 import xmltodict
 from dictor import dictor as D
-from .models import Agent, Service
+from .models import Host, Service
 
 from django.shortcuts import render
 
@@ -16,29 +16,30 @@ api = NinjaAPI(csrf=False)
 
 #!!!! need way to pull all agent queryset periodically, otherwise will read once during startup, but not update during runtime
 ## if a new agent is added
-agents = Agent.objects.all().select_related()
+hosts = Host.objects.all().select_related()
 
 
 
 @sync_to_async
-def save_agent(monit_id, name, data):
+def save_host(monit_id, name, data):
     try:
-        agent = Agent.objects.get(pk=monit_id)
-        agent.state = 1
-        agent.uptime = D(data, "monit.server.uptime")
-        agent.name = name
-        agent.cycle = D(data, "monit.server.poll")
-        agent.monit_version = D(data, "monit.@version")
-        agent.os_name = D(data, "monit.platform.name")
-        agent.os_version = D(data, "monit.platform.version")
-        agent.os_arch = D(data, "monit.platform.machine")
-        agent.os_release = D(data, "monit.platform.release")
-        agent.cpu = D(data, "monit.platform.cpu")
-        agent.mem = D(data, "monit.platform.memory")
-        agent.swap = D(data, "monit.platform.swap")
-        agent.save()
-    except Agent.DoesNotExist:
-        agent = Agent(
+        host = Host.objects.get(pk=monit_id)
+        host.state = 1
+        host.uptime = D(data, "monit.server.uptime")
+        host.name = name
+        host.cycle = D(data, "monit.server.poll")
+        host.monit_version = D(data, "monit.@version")
+        host.os_name = D(data, "monit.platform.name")
+        host.os_version = D(data, "monit.platform.version")
+        host.os_arch = D(data, "monit.platform.machine")
+        host.os_release = D(data, "monit.platform.release")
+        host.cpu = D(data, "monit.platform.cpu")
+        host.mem = D(data, "monit.platform.memory")
+        host.swap = D(data, "monit.platform.swap")
+        host.last_checkin = datetime.datetime.now()
+        host.save()
+    except Host.DoesNotExist:
+        host = Host(
             name=name, 
             monit_id=monit_id, 
             state=1,
@@ -53,26 +54,26 @@ def save_agent(monit_id, name, data):
             mem=D(data, "monit.platform.memory"),
             swap=D(data, "monit.platform.swap")
         )
-        agent.save()
+        host.save()
     except (DatabaseError, Error, IntegrityError, OperationalError) as exception:
         logger.error(exception)
-    return agent
+    return host
 
 @sync_to_async
-def save_svc(name, status, monitor, svc_data, svc_type, agent):
+def save_svc(name, status, monitor, svc_data, svc_type, host):
     # update or create a service record
     try:
-        svc = Service.objects.get(name=name, agent=agent)
+        svc = Service.objects.get(name=name, host=host)
         svc.status = status
         svc.monitor = monitor
         svc.data = svc_data
         svc.save()
     except Service.DoesNotExist:
-        svc = Service(name=name, agent=agent, svc_type=svc_type, status=status, monitor=monitor, data=svc_data)
+        svc = Service(name=name, host=host, svc_type=svc_type, status=status, monitor=monitor, data=svc_data)
         svc.save()
 
 @sync_to_async
-def save_event(svc_name, event, state, agent):
+def save_event(svc_name, event, state, host):
     #logger.debug(svc_name)
     #logger.debug(event)
     #logger.debug(agent)
@@ -80,7 +81,7 @@ def save_event(svc_name, event, state, agent):
 
     # update or create a service Event record
     try:
-        svc = Service.objects.get(name=svc_name, agent=agent)
+        svc = Service.objects.get(name=svc_name, host=host)
         if event:
             svc.event = event
             svc.state = state
@@ -93,10 +94,10 @@ def save_event(svc_name, event, state, agent):
 @sync_to_async
 def save_monit_state(state, monit_id):
     try:
-        agent = Agent.objects.get(pk=monit_id)
-        agent.state = state 
-        agent.save()
-    except (DatabaseError, Error, IntegrityError, OperationaError) as exception:
+        host = Host.objects.get(pk=monit_id)
+        host.state = state 
+        host.save()
+    except (DatabaseError, Error, IntegrityError, OperationalError) as exception:
         logger.error(exception)
 
 
@@ -112,7 +113,7 @@ async def collector(request):
     monit_id = D(json_data, "monit.@id")
     name = D(json_data, "monit.server.localhostname")
     # create new agent record if non existent
-    agent = await save_agent(monit_id, name, json_data)
+    host = await save_host(monit_id, name, json_data)
     
 
     if D(json_data, "monit.services.service"):
@@ -129,7 +130,7 @@ async def collector(request):
                 status = D(svc_data, "status")
                 monitor = D(svc_data, "monitor")
      #           logger.debug(agent)
-                await save_svc(name, status, monitor, svc_data, svc_type, agent)
+                await save_svc(name, status, monitor, svc_data, svc_type, host)
         else:
             # if single service
             svc_data = D(json_data, "monit.services.service")
@@ -137,7 +138,7 @@ async def collector(request):
             svc_type = D(json_data, "monit.services.service.type")
             status = D(json_data, "monit.services.service.status")
             monitor = D(json_data, "monit.services.service.monitor")
-            await save_svc(name, status, monitor, svc_data, svc_type, agent)
+            await save_svc(name, status, monitor, svc_data, svc_type, host)
 
     # check incoming event messages
     if D(json_data, "monit.event"):
@@ -147,5 +148,5 @@ async def collector(request):
         if svc_name == "Monit":
             await save_monit_state(state, monit_id)
         else:
-            await save_event(svc_name, event, state, agent)
+            await save_event(svc_name, event, state, host)
     return "collectgor"
