@@ -109,8 +109,9 @@ def test(request):
 async def collector(request):
     #logger.success(request.body)
     json_data = json.loads(json.dumps(xmltodict.parse(request.body)))
-    logger.info(json_data)
+    #logger.info(json_data)
     monit_id = D(json_data, "monit.@id")
+    logger.debug(monit_id)
     name = D(json_data, "monit.server.localhostname")
     # create new agent record if non existent
     host = await save_host(monit_id, name, json_data)

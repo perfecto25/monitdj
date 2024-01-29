@@ -8,55 +8,53 @@
 
 {% include "quickstatus.html" %}
 
-<div class="page-content">
+<div class="page-content" hx-get="{% url 'dashboard' %}" hx-target="#response" hx-trigger="load">
   <section class="row">
+    <div class="col" hx-get="{% url 'dashboard' %}" hx-target="#response" hx-trigger="every 5s">
+      <div class="float-end">
+
+        <div class="btn-group p-2">
+          <button type="button" class="btn btn-sm btn-secondary" hx-get="{% url 'dashboard' %}" hx-target="#response" hx-trigger="click"><i class="bi bi-arrow-clockwise"></i></button>
+        </div>
+      </div>
+    </div>
+
+
     <div class="col col-lg-12">
       <div class="row">
-        <div class="col col-lg-12 order-md-1 order-last">
-        
-
-          <!-- PROD DASHBOARD -->
-          {% include "prod.html" %}
-
-            <!-- SIM DASHBOARD -->
-            <div class="card">
-              <div class="card-header">
-                  <h4><div class="badge bg-primary">SIM Host Errors</div></h4>
-              </div>
-              <div class="card-body">
-                
-              </div>
-            </div>
-
-
-            <!-- ALL HOSTS DASHBOARD -->
-            <div class="card">
-              <div class="card-header">
-                  <h4><div class="badge bg-primary-subtle">All Service Errors</div></h4>
-              </div>
-              <div class="card-body">
-                
-              </div>
-            </div>
-
-
-            <!-- UNRESPONSIVE DASHBOARD -->
-            <div class="card">
-              <div class="card-header">
-                  <h4><div class="badge bg-secondary">No Response</div></h4>
-              </div>
-              <div class="card-body">
-                
-              </div>
-            </div>
+        <div class="col col-lg-12 order-md-1 order-last" id="response">
 
         </div>
       </div>
     </div>
+
+
   </section>
 </div> <!-- page content -->
 
 
 {% include "modal/basemodal.html" %}
+
+
+
+<script>
+  const basemodal = document.getElementById('basemodal')
+  basemodal.addEventListener('show.bs.modal', event => {
+    // Button that triggered the modal
+    const button = event.relatedTarget
+    // Extract info from data-bs-* attributes
+    const title = button.getAttribute('data-bs-title')
+    const modal_size = button.getAttribute('data-bs-modalsize')
+    const modal_title = basemodal.querySelector('.modal-title')
+    const modal_dialog = document.getElementById('modalDialog')
+    // regenerate modal size class + title
+    modal_title.textContent = title
+    modal_dialog.className = ''
+    modal_dialog.classList.add("modal-dialog")
+    modal_dialog.classList.add(modal_size)
+  
+  })
+</script>
+  
 
 {% endblock %}

@@ -20,6 +20,7 @@ urlpatterns = [
     path("", views.index, name="index"),
     #path("collector", collector, name="collector"),
     path("api/", api.urls),
+    path("dashboard/", views.dashboard, name="dashboard"),
     path("ack_service/<int:svc_id>/", views.ack_service, name="ack_service"),
     path("host_detail/<uuid:monit_id>/", views.host_detail, name="host_detail")
     #path("collector/", views.api.urls, name="collector")

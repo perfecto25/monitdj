@@ -37,16 +37,14 @@ class Service(models.Model):
     event = models.CharField(max_length=300, blank=True, null=True)
     data = models.JSONField(blank=True, null=True)
     last_modified = models.DateTimeField(auto_now=True)
+    ack = models.BooleanField(default=False)
     class Meta:
         constraints = [models.UniqueConstraint(fields=["name", "host"], name="unique_svc_name")]
 
     def __unicode__(self):
        return self.name
 
-class Ack(models.Model):
-    service = models.OneToOneField(Service, on_delete=models.CASCADE, blank=True, null=True, related_name="service_object", db_index=True)
-    state = models.BooleanField(default=False) 
-    last_modified = models.DateTimeField(auto_now=True)
+
 
 # class NotificationSetting(models.Model):
 #     tier = models.IntegerField(blank=True, null=True) # 4 tiers of notification

@@ -1,11 +1,12 @@
 <div class="p-1 mb-3">
-  <span class="badge badge text-bg-info">{{ obj.name }}</span>
   {% if obj.state == 1 %}
   <span class="badge text-bg-success">active</span>
   {% else %}
   <span class="badge text-bg-secondary">inactive</span>
   {% endif %}
+  <span class="badge text-bg-light-secondary">{{current_dt}}</span>
   </div>
+  
   
   <ul class="nav nav-tabs mb-3" id="pills-tab" role="tablist">
     <li class="nav-item" role="presentation">
@@ -23,8 +24,13 @@
   
     <!-- SERVICES -->
     <div class="tab-pane fade show active" id="pills-services" role="tabpanel" aria-labelledby="pills-services-tab" tabindex="0">
+      <ul style="list-style-type:none;">
       {% for svc in services %}
-      {{ svc.name }} {{ svc.event }}<br>
+        {% if svc.status != 0 %}
+          <li><i class="bi bi-exclamation-circle-fill" style="color:red"></i> {{ svc.name }} {{ svc.event }}</li>
+        {% else %}
+          <li><i class="bi bi-check-circle-fill" style="color:green"></i> {{ svc.name }}</li>
+        {% endif %}
       {% endfor %}
     </div>
     
