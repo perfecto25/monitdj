@@ -4,6 +4,7 @@ from django.views.decorators.csrf import csrf_exempt, csrf_protect
 from django.conf import settings
 from django.db.models import Q, Count
 from django.urls import reverse
+from django.views.decorators.cache import cache_page
 import datetime
 from loguru import logger
 from .models import Service, Host
@@ -12,22 +13,41 @@ from .utils import show_queryset, show_object, bytesto
 #def index(request):
     #return render(request, "index.html")
 
+#@cache_page(10*1)
 def dashboard(request):
     logger.debug("DASHBOARD")
     ts = datetime.datetime.now()
     current_dt = datetime.datetime.now() - datetime.timedelta(seconds=60)
-    warning = Host.objects.annotate(nonzero=Count("service", filter=~Q(service__status=0))) \
-        .filter(last_checkin__gt=current_dt).order_by("name").prefetch_related("service").filter(nonzero__gt=0).distinct()
-    noresp = Host.objects.filter(last_checkin__lt=current_dt)
-    context = {"settings": settings, "warning": warning, "noresp": noresp, "ts": ts}
+    #warning = Host.objects.annotate(nonzero=Count("service", filter=~Q(service__status=0))) \
+        #.filter(last_checkin__gt=current_dt).order_by("name").prefetch_related("service").filter(nonzero__gt=0).distinct()
+    
+    #allhosts = Host.objects.annotate(nonzero=Count("service")).prefetch_related("service").filter(nonzero__gt=0).distinct().order_by("name")
 
-    return render(request, "dashboard.html", context=context)
+
+#.filter(service__monitor=1) \
+
+    ## all hosts and their services (both up, down, host unreachable, etc)
+    allhosts = Host.objects.filter(last_checkin__gt=current_dt).prefetch_related("service") \
+        .filter(service__last_modified__gt=current_dt) \
+        .annotate(svc_ok=Count("service", filter=Q(service__status=0) & Q(service__last_modified__gt=current_dt))) \
+        .annotate(svc_count=Count("service", filter=Q(service__last_modified__gt=current_dt))) \
+        .order_by("name").distinct()
+
+    ## only hosts with services that have problems
+    #warning = allhosts.annotate(nonzero=Count("service", filter=~Q(service__status=0))).order_by("name").filter(nonzero__gt=0).filter(service__last_modified__gt=current_dt).distinct()
+    
+    ## only hosts that are not responsive
+    noresp = Host.objects.filter(last_checkin__lt=current_dt)
+
+    context = {"settings": settings, "noresp": noresp, "allhosts": allhosts, "ts": ts, "current_dt": current_dt }
+
+    return render(request, "index2.html", context=context)
     
 def index(request):
     
     context = {"settings": settings}
 
-    return render(request, "index.html", context=context)
+    return render(request, "index2.html", context=context)
 
 
 def ack_service(request, svc_id):

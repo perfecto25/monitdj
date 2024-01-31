@@ -6,9 +6,10 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>MonitDJ</title>  
-  <link rel="shortcut icon" href="{% static '/assets/compiled/svg/favicon.svg' %}" type="image/x-icon">
-  <link rel="stylesheet" href="{% static '/assets/compiled/css/app.css' %}">
-  <link rel="stylesheet" href="{% static '/assets/compiled/css/app-dark.css' %}">
+  <link rel="shortcut icon" href="{% static 'assets/compiled/svg/favicon.svg' %}" type="image/x-icon">
+  <link rel="stylesheet" href="{% static 'assets/compiled/css/app.css' %}">
+  <link rel="stylesheet" href="{% static 'assets/compiled/css/app-dark.css' %}">
+  <link rel="stylesheet" href="{% static 'css/monitdj.css' %}">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
   <script>
     document.body.addEventListener('htmx:configRequest', (event) => {
@@ -17,7 +18,7 @@
   </script>
 </head>
 <body>
-  <script src="{% static '/assets/static/js/initTheme.js' %}"></script>
+  <script src="{% static 'assets/static/js/initTheme.js' %}"></script>
     <div id="app">
       <div id="main" class="layout-horizontal">
         <header class="mb-5">

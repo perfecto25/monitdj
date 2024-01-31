@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+{% load static %}
+{% block content %}
+
+<div class="page-heading">
+  <h3>Dashboard</h3>
+</div>
+
+{% include "quickstatus.html" %}
+
+<div class="page-content">
+  <section class="row">
+    <div class="col">
+      <div class="float-end">
+
+        <div class="btn-group p-2">
+          <button type="button" class="btn btn-sm btn-secondary" hx-get="{% url 'dashboard' %}" hx-target="#response" hx-trigger="click"><i class="bi bi-arrow-clockwise"></i></button>
+        </div>
+      </div>
+    </div>
+
+
+    <div class="col col-lg-12">
+      <div class="row">
+        <div class="col col-lg-12 order-md-1 order-last" id="response">
+
+
+          {% include "dashboards/prod.html" %}
+
+          {% include "dashboards/allhosts.html" %}
+
+
+        </div>
+      </div>
+    </div>
+
+
+  </section>
+</div> <!-- page content -->
+
+
+{% include "modal/basemodal.html" %}
+
+
+
+<script>
+  const basemodal = document.getElementById('basemodal')
+  basemodal.addEventListener('show.bs.modal', event => {
+    // Button that triggered the modal
+    const button = event.relatedTarget
+    // Extract info from data-bs-* attributes
+    const title = button.getAttribute('data-bs-title')
+    const modal_size = button.getAttribute('data-bs-modalsize')
+    const modal_title = basemodal.querySelector('.modal-title')
+    const modal_dialog = document.getElementById('modalDialog')
+    // regenerate modal size class + title
+    modal_title.textContent = title
+    modal_dialog.className = ''
+    modal_dialog.classList.add("modal-dialog")
+    modal_dialog.classList.add(modal_size)
+  
+  })
+</script>
+  
+
+{% endblock %}
