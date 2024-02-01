@@ -2,81 +2,70 @@ from django.shortcuts import render
 from django.http import HttpResponse
 from django.views.decorators.csrf import csrf_exempt, csrf_protect
 from django.conf import settings
-from django.db.models import Q
+from django.db.models import Q, Count
 from django.urls import reverse
+from django.views.decorators.cache import cache_page
 import datetime
 from loguru import logger
-from .models import Service, Agent, Ack
-from .utils import show_queryset, show_object
+from .models import Service, Host
+from .utils import show_queryset, show_object, bytesto
 
-def index(request):
+#def index(request):
+    #return render(request, "index.html")
 
-    # 1 min ago
-    current_dt = datetime.datetime.now() - datetime.timedelta(minutes=1)
-
-    warning = Agent.objects.filter(~Q(state=2), ~Q(service__status=0)).filter(last_checkin__gt=current_dt).order_by("name")
-    logger.warning(warning)
-    # agents with no response (dead)
-    noresp = Agent.objects.filter(Q(state=2) | Q(last_checkin__lt=current_dt)).order_by("name")
-    logger.warning(noresp)
+#@cache_page(10*1)
+def dashboard(request):
+    logger.debug("DASHBOARD")
+    ts = datetime.datetime.now()
+    current_dt = datetime.datetime.now() - datetime.timedelta(seconds=60)
+    #warning = Host.objects.annotate(nonzero=Count("service", filter=~Q(service__status=0))) \
+        #.filter(last_checkin__gt=current_dt).order_by("name").prefetch_related("service").filter(nonzero__gt=0).distinct()
     
-    ok = Agent.objects.filter(~Q(state=2), Q(service__status=1), last_checkin__gt=current_dt).order_by("name")
-    logger.warning(ok)
-    if warning:
-        for agent in warning:
-            agent.services = Service.objects.filter(agent_id=agent.monit_id).select_related().all()
-            for svc in agent.services:
-                svc.ack = Ack.objects.filter(service=svc)
-#        show_queryset(w)
-#        show_object(w.service)
-#        venue = Event.objects.filter(venue__id=venue_id)
+    #allhosts = Host.objects.annotate(nonzero=Count("service")).prefetch_related("service").filter(nonzero__gt=0).distinct().order_by("name")
 
- #   qs = Agent.objects.all().select_related().order_by("name")
-    #show_queryset(qs)
 
-    # for svc in qs:
-    #     if svc.status == 2:
-    #         logger.error(svc.event)
-    #         if not svc.agent.name in warning.keys():
-    #             warning[svc.agent.name] = []
-    #         warning[svc.agent.name].append(svc)
+#.filter(service__monitor=1) \
 
-    #for svc in warning:
-    #    logger.error(f"svc name: {svc.name}, svc status: {svc.status}")
+    ## all hosts and their services (both up, down, host unreachable, etc)
+    allhosts = Host.objects.filter(last_checkin__gt=current_dt).prefetch_related("service") \
+        .filter(service__last_modified__gt=current_dt) \
+        .annotate(svc_ok=Count("service", filter=Q(service__status=0) & Q(service__last_modified__gt=current_dt))) \
+        .annotate(svc_count=Count("service", filter=Q(service__last_modified__gt=current_dt))) \
+        .order_by("name").distinct()
 
-        # if not svc.agent.name in warning.keys():
-        #     warning[svc.agent.name] = []
-        # warning[svc.agent.name].append(svc)
-        #logger.debug(s.agent.name)
-    #Service.objects.filter(status=2).select_related()
-    logger.debug(warning)
-    context = {"settings": settings, "warning": warning, "noresp": noresp, "ok": ok}
+    ## only hosts with services that have problems
+    #warning = allhosts.annotate(nonzero=Count("service", filter=~Q(service__status=0))).order_by("name").filter(nonzero__gt=0).filter(service__last_modified__gt=current_dt).distinct()
+    
+    ## only hosts that are not responsive
+    noresp = Host.objects.filter(last_checkin__lt=current_dt)
 
-    return render(request, "index.html", context=context)
+    context = {"settings": settings, "noresp": noresp, "allhosts": allhosts, "ts": ts, "current_dt": current_dt }
+
+    return render(request, "index2.html", context=context)
+    
+def index(request):
+    
+    context = {"settings": settings}
+
+    return render(request, "index2.html", context=context)
 
 
 def ack_service(request, svc_id):
     """ acks incoming svc """
 
-    try:
-        ack = Ack.objects.get(service__id=svc_id)
-        logger.warning(ack.state)
-        if ack:
-            if ack.state == True:
-                ack.state = False
-                msg = "Ack"
-                color = "primary"
-            else:
-                ack.state = True
-                msg = "Un-Ack"
-                color = "secondary"
-            ack.save()
-    except Ack.DoesNotExist:
-        ack = Ack(state=True, service_id=svc_id)
-        ack.save()
+    
+    svc = Service.objects.get(pk=svc_id)
+    logger.warning(svc.state)
+    
+    if svc.ack == True:
+        svc.ack = False
+        msg = "Ack"
+        color = "primary"
+    else:
+        svc.ack = True
         msg = "Un-Ack"
         color = "secondary"
-
+    svc.save()
 
     if request.method == "GET":
         logger.warning(svc_id)
@@ -97,15 +86,22 @@ def test(request):
     return render(request, "test1.html")
 
 
-def agent_detail(request, monit_id):
+
+def host_detail(request, monit_id):
     resp = """
     ok
     """
-    obj = Agent.objects.get(pk=monit_id)
-    services = Service.objects.filter(agent_id=monit_id)
+    current_dt = datetime.datetime.now() - datetime.timedelta(seconds=60)
+    host = Host.objects.get(pk=monit_id)
+    logger.debug(host.service)
+    services = Service.objects.filter(host_id=monit_id).filter(last_modified__gt=current_dt).order_by("-status")
+    logger.debug(services)
+    memory = bytesto(host.mem, 'm')
+    swap = bytesto(host.swap, 'm')
     resp = """
+    
 
     """
-    context = {"obj": obj, "services": services}
+    context = {"obj": host, "services": services, "memory": memory, "swap": swap, "current_dt": current_dt}
 #    return HttpResponse(monit_id)
-    return render(request, "modal/agent.html", context=context)
+    return render(request, "modal/host.html", context=context)

@@ -1,0 +1,92 @@
+{% load static %}
+
+<div class="card shadow">
+  <div class="card-header">
+      <h3><div class="badge bg-danger">PROD Host Errors</div></h3> 
+  </div>
+ 
+  <div class="card p-2">
+    <div class="p-3 rounded">
+     
+      {% for host in allhosts %}
+      <div class="row p-3 bg-body rounded mb-1">
+        <div class="col">
+            <div class="btn btn-sm btn-info"
+              hx-get="{% url 'host_detail' monit_id=host.monit_id %}"
+              hx-target="#modal-body-area"
+              hx-swap="OuterHTML"
+              hx-trigger="click"
+              data-bs-toggle="modal" data-bs-title="{{host.name}}" data-bs-target="#basemodal"  data-bs-modalsize="modal-xl">
+            {{host.name}}
+            </div>
+        </div>
+        <div class="col-10">
+        {% if host.service.all %}
+          {% for svc in host.service.all %}
+        
+            <!-- Only show services that are actively being sent to API, not stale services residing in DB-->
+            <!-- if svc.last_modified|date:"M. d, Y, g:i a" > current_dt|date:"M. d, Y, g:i a" and svc.event and not svc.status == 0 -->
+            <div class="row p-1 rounded mx-auto border border-primary-subtle b mb-1">
+              
+              <div class="col-10">
+                {% if svc.status != 0 %}
+                <i class="bi bi-circle-fill redlight"></i> {{ svc.name }} {{ svc.event }} {{svc.last_modified}} {{current_dt}}
+                {% else %}
+                <i class="bi bi-circle-fill greenlight"></i> {{ svc.name }}
+                {% endif %}
+              </div>
+
+              <div class="col">
+                <span id="target_{{svc.id}}">
+                {% if svc.ack == True %}
+                  <button id="btn_{{svc.id}}" class="btn btn-secondary btn-sm agent-btn ack_btn"
+                      hx-get="{% url 'ack_service' svc_id=svc.id %}" 
+                      hx-trigger="click" 
+                      hx-target="#target_{{svc.id}}" 
+                      hx-swap="OuterHTML">Un-ack
+                  </button>
+                {% else %}
+                  <button id="btn_{{svc.id}}" class="btn btn-primary btn-sm agent-btn ack_btn"
+                      hx-get="{% url 'ack_service' svc_id=svc.id %}" 
+                      hx-trigger="click" 
+                      hx-target="#target_{{svc.id}}" 
+                      hx-swap="OuterHTML">Ack
+                  </button>
+                {% endif %}
+                </span>
+              </div>
+            </div>
+            
+          {% endfor %} <!-- for svc in hosts.service.all -->
+        {% endif %}
+        </div>
+      </div><!--div class row p1 -->
+      {% endfor %} <!-- for host in warning -->
+
+
+      {% if noresp %}
+      {% for host in noresp %}
+      <div class="row p-3 bg-body rounded mb-1">
+        <div class="col">
+            <div class="btn btn-sm btn-secondary"
+              hx-get="{% url 'host_detail' monit_id=host.monit_id %}"
+              hx-target="#modal-body-area"
+              hx-swap="OuterHTML"
+              hx-trigger="click"
+              data-bs-toggle="modal" data-bs-title="{{host.name}}" data-bs-target="#basemodal"  data-bs-modalsize="modal-xl">
+            {{host.name}}
+            </div>
+        </div>
+        <div class="col-10">
+          <div class="row p-1 rounded mx-auto border border-primary-subtle b mb-1">
+            <div class="col-10">
+              </div>
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+      {% endif %}
+
+    </div> <!-- cardbody -->
+  </div> <!-- card --> 
+</div>

@@ -31,7 +31,7 @@ postgres setup
 ## Components
 
 - bootstrap version 5.2.3
-- theme: https://demos.themeselection.com/sneat-bootstrap-html-admin-template-free/html/index.html
+- theme: https://zuramai.github.io/mazer/demo/layout-default.html
 
 ## Developing
 

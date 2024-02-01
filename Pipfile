@@ -12,6 +12,7 @@ django-ninja = "*"
 #psycopg2 = "*"
 uvicorn = "*"
 xmltodict = "*"
+django-debug-toolbar = "*"
 
 [dev-packages]
 
@@ -20,4 +21,3 @@ python_version = "3.11"
 
 [scripts]
 app = "python manage.py runserver 0.0.0.0:8000"
-

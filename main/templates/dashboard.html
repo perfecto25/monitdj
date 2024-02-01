@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% load static %}
+
+<div class="row">
+  <div class="col text-center p-3">
+    <div class="badge bg-light-secondary">{{ts|date:"M. d, Y, g:i:s a " }}</div>
+  </div>
+</div>
+
+
+{% include "dashboards/prod.html" %}
+
+{% include "dashboards/allhosts.html" %}
+
+
+--- end dash

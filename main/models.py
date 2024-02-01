@@ -1,7 +1,7 @@
 from django.db import models
 
 
-class Agent(models.Model):
+class Host(models.Model):
     monit_id = models.UUIDField(primary_key=True, editable=False)
     name = models.CharField(max_length=30, blank=True, null=True)
     state = models.IntegerField(blank=True, null=True)
@@ -29,7 +29,7 @@ class Agent(models.Model):
 
 class Service(models.Model):
     name = models.CharField(max_length=40, blank=False, null=False, default="", db_index=True)
-    agent = models.ForeignKey(Agent, on_delete=models.CASCADE, related_name="service")
+    host = models.ForeignKey(Host, on_delete=models.CASCADE, related_name="service")
     status = models.IntegerField(blank=True, null=True)
     state = models.IntegerField(blank=True, null=True)
     svc_type = models.IntegerField(blank=True, null=True)
@@ -37,35 +37,33 @@ class Service(models.Model):
     event = models.CharField(max_length=300, blank=True, null=True)
     data = models.JSONField(blank=True, null=True)
     last_modified = models.DateTimeField(auto_now=True)
+    ack = models.BooleanField(default=False)
     class Meta:
-        constraints = [models.UniqueConstraint(fields=["name", "agent"], name="unique_svc_name")]
+        constraints = [models.UniqueConstraint(fields=["name", "host"], name="unique_svc_name")]
 
     def __unicode__(self):
        return self.name
 
-class Ack(models.Model):
-    service = models.OneToOneField(Service, on_delete=models.CASCADE, blank=True, null=True, related_name="service_object", db_index=True)
-    state = models.BooleanField(default=False) 
-    last_modified = models.DateTimeField(auto_now=True)
 
-class NotificationSetting(models.Model):
-    tier = models.IntegerField(blank=True, null=True) # 4 tiers of notification
-    # 1st tier = default notification setting
-    # 2nd tier = per host group
-    # 3rd tier = per host
-    # 4th tier = per service
 
-class Connector(models.Model):
-    name = models.CharField 
-    connector_type = models.SelectField(choices=slack, email)
-    state = active, inactive
+# class NotificationSetting(models.Model):
+#     tier = models.IntegerField(blank=True, null=True) # 4 tiers of notification
+#     # 1st tier = default notification setting
+#     # 2nd tier = per host group
+#     # 3rd tier = per host
+#     # 4th tier = per service
 
-class SlackConnector
-    connector = foreign key to COnnnector
-    webhook url = 
-    channel_id = 
+# class Connector(models.Model):
+#     name = models.CharField 
+#     connector_type = models.SelectField(choices=slack, email)
+#     state = active, inactive
 
-class EmailConnector
-    connector = FK to connector
-    from_address 
+# class SlackConnector
+#     connector = foreign key to COnnnector
+#     webhook url = 
+#     channel_id = 
+
+# class EmailConnector
+#     connector = FK to connector
+#     from_address 
     

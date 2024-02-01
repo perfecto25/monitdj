@@ -13,7 +13,7 @@ SECRET_KEY = 'django-insecure-p==v1p#_l&weoi%c(oh_s0l-jw%v&3t086wxic3clim9tb@gy@
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['localhost', '0.0.0.0', '192.168.30.14', '192.168.1.113']
+ALLOWED_HOSTS = ['localhost', '0.0.0.0', '192.168.30.14', '192.168.1.113', '192.168.56.1']
 
 
 # Application definition
@@ -28,6 +28,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'debug_toolbar'
 ]
 
 MIDDLEWARE = [
@@ -35,10 +36,12 @@ MIDDLEWARE = [
     #'whitenoise.middleware.WhiteNoiseMiddleware', # for static file serving
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
-    #'django.middleware.csrf.CsrfViewMiddleware',
+    'django.middleware.csrf.CsrfViewMiddleware',
+    'debug_toolbar.middleware.DebugToolbarMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    
 ]
 
 ROOT_URLCONF = 'monitdj.urls'
@@ -103,18 +106,34 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/4.2/topics/i18n/
 
-LANGUAGE_CODE = 'en-us'
-TIME_ZONE = 'UTC'
+LANGUAGE_CODE = "en-us"
+TIME_ZONE = "America/New_York"
 USE_I18N = True
 USE_TZ = True
 
+
 # for DEV deployment
-STATIC_URL = 'static/'
+STATIC_URL = "static/"
+STATIC_ROOT = os.path.join(BASE_DIR, STATIC_URL)
+STATICFILES_DIRS = [os.path.join(BASE_DIR, 'main/static'),]
+
+
+
 
 # for Prod Deployment
 # STATIC_ROOT = os.path.join(BASE_DIR, 'static',)
 
-# Default primary key field type
-# https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
+CACHES = {
+   "default": {
+       "BACKEND": "django.core.cache.backends.locmem.LocMemCache",
+       "LOCATION": "monit-data"
+   }
+}
 
-#DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+INTERNAL_IPS = ["127.0.0.1"]
+DEBUG_TOOLBAR_CONFIG = {
+    'RENDER_PANELS': True,
+    'RESULTS_CACHE_SIZE': 100,
+    'RESULTS_STORE_SIZE': 30, # Required for ddt_request_history
+    'SHOW_TOOLBAR_CALLBACK': lambda request: True
+}
