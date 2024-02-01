@@ -1,5 +1,5 @@
 {% load static %}
-
+{% load mathfilters %}
 <div class="card shadow">
   <div class="card-header">
       <h3><div class="badge bg-danger">PROD Host Errors</div></h3> 
@@ -11,13 +11,19 @@
       {% for host in allhosts %}
       <div class="row p-3 bg-body rounded mb-1">
         <div class="col">
-            <div class="btn btn-sm btn-info"
+            <div class="btn btn-sm btn-outline-info"
               hx-get="{% url 'host_detail' monit_id=host.monit_id %}"
               hx-target="#modal-body-area"
               hx-swap="OuterHTML"
               hx-trigger="click"
               data-bs-toggle="modal" data-bs-title="{{host.name}}" data-bs-target="#basemodal"  data-bs-modalsize="modal-xl">
-            {{host.name}}
+            {{host.name}}<br>
+            
+            </div>
+            <br>
+            <div class="mt-3">
+              <span class="greenlight">{{host.svc_ok}}</span> |
+              <span class="redlight">{{host.svc_count|sub:host.svc_ok}}</span>
             </div>
         </div>
         <div class="col-10">
@@ -25,12 +31,12 @@
           {% for svc in host.service.all %}
         
             <!-- Only show services that are actively being sent to API, not stale services residing in DB-->
-            <!-- if svc.last_modified|date:"M. d, Y, g:i a" > current_dt|date:"M. d, Y, g:i a" and svc.event and not svc.status == 0 -->
+            {% if svc.last_modified|date:"M. d, Y, g:i a" > last_min|date:"M. d, Y, g:i a" and svc.event and not svc.status == 0 %}
             <div class="row p-1 rounded mx-auto border border-primary-subtle b mb-1">
               
               <div class="col-10">
                 {% if svc.status != 0 %}
-                <i class="bi bi-circle-fill redlight"></i> {{ svc.name }} {{ svc.event }} {{svc.last_modified}} {{current_dt}}
+                <i class="bi bi-circle-fill redlight"></i> <b>{{ svc.name }}</b> {{ svc.event }}
                 {% else %}
                 <i class="bi bi-circle-fill greenlight"></i> {{ svc.name }}
                 {% endif %}
@@ -56,7 +62,7 @@
                 </span>
               </div>
             </div>
-            
+            {% endif %}
           {% endfor %} <!-- for svc in hosts.service.all -->
         {% endif %}
         </div>
@@ -78,10 +84,9 @@
             </div>
         </div>
         <div class="col-10">
-          <div class="row p-1 rounded mx-auto border border-primary-subtle b mb-1">
-            <div class="col-10">
-              </div>
-          </div>
+          
+            Monit agent is down or unresponsive
+          
         </div>
       </div>
       {% endfor %}

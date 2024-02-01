@@ -13,6 +13,7 @@ django-ninja = "*"
 uvicorn = "*"
 xmltodict = "*"
 django-debug-toolbar = "*"
+django-mathfilters = "*"
 
 [dev-packages]
 

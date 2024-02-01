@@ -17,7 +17,7 @@ from .utils import show_queryset, show_object, bytesto
 def dashboard(request):
     logger.debug("DASHBOARD")
     ts = datetime.datetime.now()
-    current_dt = datetime.datetime.now() - datetime.timedelta(seconds=60)
+    last_min = datetime.datetime.now() - datetime.timedelta(seconds=60)
     #warning = Host.objects.annotate(nonzero=Count("service", filter=~Q(service__status=0))) \
         #.filter(last_checkin__gt=current_dt).order_by("name").prefetch_related("service").filter(nonzero__gt=0).distinct()
     
@@ -27,19 +27,19 @@ def dashboard(request):
 #.filter(service__monitor=1) \
 
     ## all hosts and their services (both up, down, host unreachable, etc)
-    allhosts = Host.objects.filter(last_checkin__gt=current_dt).prefetch_related("service") \
-        .filter(service__last_modified__gt=current_dt) \
-        .annotate(svc_ok=Count("service", filter=Q(service__status=0) & Q(service__last_modified__gt=current_dt))) \
-        .annotate(svc_count=Count("service", filter=Q(service__last_modified__gt=current_dt))) \
+    allhosts = Host.objects.filter(last_checkin__gt=last_min).prefetch_related("service") \
+        .filter(service__last_modified__gt=last_min) \
+        .annotate(svc_ok=Count("service", filter=Q(service__status=0))) \
+        .annotate(svc_count=Count("service")) \
         .order_by("name").distinct()
 
     ## only hosts with services that have problems
     #warning = allhosts.annotate(nonzero=Count("service", filter=~Q(service__status=0))).order_by("name").filter(nonzero__gt=0).filter(service__last_modified__gt=current_dt).distinct()
     
     ## only hosts that are not responsive
-    noresp = Host.objects.filter(last_checkin__lt=current_dt)
+    noresp = Host.objects.filter(last_checkin__lt=last_min)
 
-    context = {"settings": settings, "noresp": noresp, "allhosts": allhosts, "ts": ts, "current_dt": current_dt }
+    context = {"settings": settings, "noresp": noresp, "allhosts": allhosts, "ts": ts, "last_min": last_min }
 
     return render(request, "index2.html", context=context)
     
