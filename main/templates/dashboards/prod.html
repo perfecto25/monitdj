@@ -29,7 +29,7 @@
         <div class="col-10">
         {% if host.service.all %}
           {% for svc in host.service.all %}
-        
+        {{svc.name}}<br>
             <!-- Only show services that are actively being sent to API, not stale services residing in DB-->
             {% if svc.last_modified|date:"M. d, Y, g:i a" > last_min|date:"M. d, Y, g:i a" and svc.event and not svc.status == 0 %}
             <div class="row p-1 rounded mx-auto border border-primary-subtle b mb-1">
@@ -62,8 +62,12 @@
                 </span>
               </div>
             </div>
+            {% else %}
+            {{svc.last_modified}}<br>
             {% endif %}
           {% endfor %} <!-- for svc in hosts.service.all -->
+        
+            
         {% endif %}
         </div>
       </div><!--div class row p1 -->
