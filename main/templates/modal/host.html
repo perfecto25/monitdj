@@ -1,4 +1,4 @@
-<div class="p-1 mb-3">
+<div class="p-1 mb-3 host_detail">
   {% if obj.state == 1 %}
   <span class="badge text-bg-success">active</span>
   {% else %}
@@ -17,6 +17,9 @@
     </li>
     <li class="nav-item" role="presentation">
       <button class="nav-link" id="pills-alerting-tab" data-bs-toggle="pill" data-bs-target="#pills-alerting" type="button" role="tab" aria-controls="pills-alerting" aria-selected="false">Alerting</button>
+    </li>
+    <li class="nav-item" role="presentation">
+      <button class="nav-link" id="pills-admin-tab" data-bs-toggle="pill" data-bs-target="#pills-admin" type="button" role="tab" aria-controls="pills-admin" aria-selected="false">Admin</button>
     </li>
   </ul>
   <div class="tab-content" id="pills-tabContent">
@@ -74,4 +77,23 @@
       Alerting
     </div>
   
+    <!-- ADMIN -->
+    <div class="tab-pane fade" id="pills-admin" role="tabpanel" aria-labelledby="pills-admin-tab" tabindex="0">
+    
+      <button type="button" 
+        id="delete_agent" 
+        class="btn btn-outline-danger" 
+        hx-get="{% url 'host_delete' monit_id=obj.monit_id %}" 
+        hx-target=".host_detail" 
+        hx-swap="outerHTML" 
+        hx-confirm="Are you sure">
+        Delete Host
+      </button>
+
+      <button type="button" class="btn btn-outline-info">Freeze Host</button>
+
+
+    </div>
+    
+    
   </div>

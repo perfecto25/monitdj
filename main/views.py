@@ -117,6 +117,12 @@ def ack_service(request, svc_id):
 def test(request):
     return render(request, "test1.html")
 
+def host_delete(request, monit_id):
+    """ delete monit agent """
+    logger.debug(monit_id)
+    return monit_id
+
+
 
 
 def host_detail(request, monit_id):
