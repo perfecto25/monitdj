@@ -13,6 +13,38 @@ from .utils import show_queryset, show_object, bytesto
 #def index(request):
     #return render(request, "index.html")
 
+
+
+def dashboard2(request):
+    logger.debug("DASHBOARD")
+    ts = datetime.datetime.now()
+    last_min = datetime.datetime.now() - datetime.timedelta(seconds=60)
+    #warning = Host.objects.annotate(nonzero=Count("service", filter=~Q(service__status=0))) \
+        #.filter(last_checkin__gt=current_dt).order_by("name").prefetch_related("service").filter(nonzero__gt=0).distinct()
+    
+    #allhosts = Host.objects.annotate(nonzero=Count("service")).prefetch_related("service").filter(nonzero__gt=0).distinct().order_by("name")
+
+
+#.filter(service__monitor=1) \
+
+    ## all hosts and their services (both up, down, host unreachable, etc)
+    allhosts = Host.objects.filter(last_checkin__gt=last_min).prefetch_related("service") \
+        .filter(service__last_modified__gt=last_min) \
+        .annotate(svc_ok=Count("service", filter=Q(service__status=0))) \
+        .annotate(svc_count=Count("service")) \
+        .order_by("name").distinct()
+
+    ## only hosts with services that have problems
+    #warning = allhosts.annotate(nonzero=Count("service", filter=~Q(service__status=0))).order_by("name").filter(nonzero__gt=0).filter(service__last_modified__gt=current_dt).distinct()
+    
+    ## only hosts that are not responsive
+    noresp = Host.objects.filter(last_checkin__lt=last_min)
+
+    context = {"settings": settings, "noresp": noresp, "allhosts": allhosts, "ts": ts, "last_min": last_min }
+
+    return render(request, "index2.html", context=context)
+
+
 #@cache_page(10*1)
 def dashboard(request):
     logger.debug("DASHBOARD")
@@ -41,13 +73,13 @@ def dashboard(request):
 
     context = {"settings": settings, "noresp": noresp, "allhosts": allhosts, "ts": ts, "last_min": last_min }
 
-    return render(request, "index2.html", context=context)
+    return render(request, "dashboard.html", context=context)
     
 def index(request):
     
     context = {"settings": settings}
 
-    return render(request, "index2.html", context=context)
+    return render(request, "index.html", context=context)
 
 
 def ack_service(request, svc_id):
@@ -71,10 +103,10 @@ def ack_service(request, svc_id):
         logger.warning(svc_id)
         resp = f"""
         <button id='btn_{svc_id}'
-        class='btn btn-{color} btn-sm agent-btn ack_btn' 
+        class='btn btn-{color} btn-sm agent-btn .ack_{svc.id}' 
         hx-get='/ack_service/{svc_id}/'
         hx-trigger='click' 
-        hx-target='#target_{svc_id}' 
+        hx-target='.ack_{svc_id}' 
         hx-swap='OuterHTML'>{msg}
         </button>"""
         return HttpResponse(resp)

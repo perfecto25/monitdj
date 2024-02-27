@@ -29,7 +29,7 @@
         <div class="col-10">
         {% if host.service.all %}
           {% for svc in host.service.all %}
-        {{svc.name}}<br>
+        
             <!-- Only show services that are actively being sent to API, not stale services residing in DB-->
             {% if svc.last_modified|date:"M. d, Y, g:i a" > last_min|date:"M. d, Y, g:i a" and svc.event and not svc.status == 0 %}
             <div class="row p-1 rounded mx-auto border border-primary-subtle b mb-1">
@@ -45,26 +45,25 @@
               <div class="col">
                 <span id="target_{{svc.id}}">
                 {% if svc.ack == True %}
-                  <button id="btn_{{svc.id}}" class="btn btn-secondary btn-sm agent-btn ack_btn"
+                  <button id="btn_{{svc.id}}" class="btn btn-secondary btn-sm agent-btn ack_{{svc.id}}"
                       hx-get="{% url 'ack_service' svc_id=svc.id %}" 
                       hx-trigger="click" 
-                      hx-target="#target_{{svc.id}}" 
+                      hx-target=".ack_{{svc.id}}" 
                       hx-swap="OuterHTML">Un-ack
                   </button>
                 {% else %}
-                  <button id="btn_{{svc.id}}" class="btn btn-primary btn-sm agent-btn ack_btn"
+                  <button id="btn_{{svc.id}}" class="btn btn-primary btn-sm agent-btn ack_btn ack_{{svc.id}}"
                       hx-get="{% url 'ack_service' svc_id=svc.id %}" 
                       hx-trigger="click" 
-                      hx-target="#target_{{svc.id}}" 
+                      hx-target=".ack_{{svc.id}}" 
                       hx-swap="OuterHTML">Ack
                   </button>
                 {% endif %}
                 </span>
               </div>
             </div>
-            {% else %}
-            {{svc.last_modified}}<br>
             {% endif %}
+            
           {% endfor %} <!-- for svc in hosts.service.all -->
         
             
