@@ -21,7 +21,7 @@ class Host(models.Model):
     def __unicode__(self):
        return self.name
     class Meta: 
-        constraints = [models.UniqueConstraint(fields=["name"], name="unique_agent_name")]
+        constraints = [models.UniqueConstraint(fields=["monit_id"], name="unique_monit_id")]
 
 # class Alert(models.Model):
 #     agent = models.ForeignKey(Agent, on_delete=models.CASCADE, related_name="agent", blank=False, null=False, primary_key=False)
