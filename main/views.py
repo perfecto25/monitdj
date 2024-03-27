@@ -119,7 +119,8 @@ def test(request):
 
 def host_delete(request, monit_id):
     """ delete monit agent """
-    logger.debug(monit_id)
+    #try:
+        #row = 
     return monit_id
 
 
