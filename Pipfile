@@ -14,11 +14,13 @@ uvicorn = "*"
 xmltodict = "*"
 django-debug-toolbar = "*"
 django-mathfilters = "*"
+huey = "*"
+redis = "*"
 
 [dev-packages]
 
 [requires]
-python_version = "3.11"
+python_version = "3.12"
 
 [scripts]
 app = "python manage.py runserver 0.0.0.0:8000"

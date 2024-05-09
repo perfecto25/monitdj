@@ -17,13 +17,13 @@
               hx-swap="OuterHTML"
               hx-trigger="click"
               data-bs-toggle="modal" data-bs-title="{{host.name}}" data-bs-target="#basemodal"  data-bs-modalsize="modal-xl">
-            {{host.name}}<br>
-            
+            {{host.name}}
             </div>
-            <br>
-            <div class="mt-3">
-              <span class="greenlight">{{host.svc_ok}}</span> |
-              <span class="redlight">{{host.svc_count|sub:host.svc_ok}}</span>
+            
+            <div class="mt-3 badge">
+              <span class="redlight">{{host.svc_error}}</span> /
+              <span class="greenlight">{{host.svc_ok}}</span>
+              
             </div>
         </div>
         <div class="col-10">
@@ -31,7 +31,7 @@
           {% for svc in host.service.all %}
         
             <!-- Only show services that are actively being sent to API, not stale services residing in DB-->
-            {% if svc.last_modified|date:"M. d, Y, g:i a" > last_min|date:"M. d, Y, g:i a" and svc.event and not svc.status == 0 %}
+            {% if svc.event and not svc.status == 0 %}
             <div class="row p-1 rounded mx-auto border border-primary-subtle b mb-1">
               
               <div class="col-10">

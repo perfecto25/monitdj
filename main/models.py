@@ -1,11 +1,12 @@
 from django.db import models
+from django.utils import timezone
 
 
 class Host(models.Model):
     monit_id = models.UUIDField(primary_key=True, editable=False)
     name = models.CharField(max_length=30, blank=True, null=True)
     state = models.IntegerField(blank=True, null=True)
-    last_checkin = models.DateTimeField(auto_now=True)
+    last_checkin = models.DateTimeField(default=timezone.now)
     monit_version = models.CharField(max_length=30, blank=True, null=True)
     uptime = models.IntegerField(blank=True, null=True)
     os_name = models.CharField(max_length=30, blank=True, null=True)
@@ -16,6 +17,7 @@ class Host(models.Model):
     mem = models.IntegerField(blank=True, null=True)
     swap = models.IntegerField(blank=True, null=True)
     cycle = models.IntegerField(blank=True, null=True) # polling cycle in seconds
+    active = models.BooleanField(default=True)
 
 
     def __unicode__(self):
@@ -36,8 +38,9 @@ class Service(models.Model):
     monitor = models.IntegerField(blank=True, null=True)
     event = models.CharField(max_length=300, blank=True, null=True)
     data = models.JSONField(blank=True, null=True)
-    last_modified = models.DateTimeField(auto_now=True)
+    last_checkin = models.DateTimeField(default=timezone.now)
     ack = models.BooleanField(default=False)
+    active = models.BooleanField(default=True)
     class Meta:
         constraints = [models.UniqueConstraint(fields=["name", "host"], name="unique_svc_name")]
 

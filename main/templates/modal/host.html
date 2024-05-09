@@ -1,5 +1,5 @@
 <div class="p-1 mb-3 host_detail">
-  {% if obj.state == 1 %}
+  {% if obj.active == 1 %}
   <span class="badge text-bg-success">active</span>
   {% else %}
   <span class="badge text-bg-secondary">inactive</span>
@@ -29,13 +29,13 @@
     <div class="tab-pane fade show active" id="pills-services" role="tabpanel" aria-labelledby="pills-services-tab" tabindex="0">
       <ul style="list-style-type:none;">
       {% for svc in services %}
-      {% if svc.last_modified|date:"M. d, Y, g:i a" > last_min|date:"M. d, Y, g:i a" and svc.event and not svc.status == 0 %}
+      
         {% if svc.status != 0 %}
           <li><i class="bi bi-circle-fill redlight"></i> {{ svc.name }} {{ svc.event }}</li>
         {% else %}
           <li><i class="bi bi-circle-fill greenlight"></i> {{ svc.name }}</li>
         {% endif %}
-        {% endif %}
+      
       {% endfor %}
     </div>
     

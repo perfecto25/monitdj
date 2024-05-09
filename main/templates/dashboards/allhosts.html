@@ -44,7 +44,7 @@
           {% for svc in host.service.all %}
 
             <!-- Only show services that are actively being sent to API, not stale services residing in DB-->
-            {% if svc.last_modified|date:"M. d, Y, g:i a" > last_min|date:"M. d, Y, g:i a" and svc.event %}
+            {% if svc.event %}
             <div class="row p-1 rounded mx-auto border border-primary-subtle b mb-1">
               <div class="col-10">
                 

@@ -11,6 +11,8 @@ from dictor import dictor as D
 from .models import Host, Service
 
 from django.shortcuts import render
+from django.utils import timezone
+
 
 api = NinjaAPI(csrf=False)
 
@@ -22,9 +24,11 @@ api = NinjaAPI(csrf=False)
 
 @sync_to_async
 def save_host(monit_id, name, data):
+    logger.warning("SAVE HOST")
     try:
         host = Host.objects.get(pk=monit_id)
         host.state = 1
+        host.active = True
         host.uptime = D(data, "monit.server.uptime")
         host.name = name
         host.cycle = D(data, "monit.server.poll")
@@ -36,13 +40,14 @@ def save_host(monit_id, name, data):
         host.cpu = D(data, "monit.platform.cpu")
         host.mem = D(data, "monit.platform.memory")
         host.swap = D(data, "monit.platform.swap")
-        host.last_checkin = datetime.datetime.now()
+        host.last_checkin = timezone.now()
         host.save()
     except Host.DoesNotExist:
         host = Host(
             name=name, 
             monit_id=monit_id, 
             state=1,
+            active=True,
             cycle=D(data, "monit.server.poll"),
             monit_version=D(data, "monit_version"),
             uptime=D(data, "monit.server.uptime"),
@@ -67,6 +72,8 @@ def save_svc(name, status, monitor, svc_data, svc_type, host):
         svc.status = status
         svc.monitor = monitor
         svc.data = svc_data
+        svc.active = True
+        svc.last_checkin = timezone.now()
         svc.save()
     except Service.DoesNotExist:
         svc = Service(name=name, host=host, svc_type=svc_type, status=status, monitor=monitor, data=svc_data)
@@ -111,7 +118,7 @@ async def collector(request):
     json_data = json.loads(json.dumps(xmltodict.parse(request.body)))
     #logger.info(json_data)
     monit_id = D(json_data, "monit.@id")
-    #logger.debug(monit_id)
+    logger.debug(monit_id)
     name = D(json_data, "monit.server.localhostname")
     # create new agent record if non existent
     host = await save_host(monit_id, name, json_data)

@@ -3,7 +3,16 @@
 a Django based M/Monit alternative for monitoring hosts using Tildeslash Monit agent
 
 
-## Requirements
+## Requirementsfrom django_cron import CronJobBase, Schedule
+
+class MyCronJob(CronJobBase):
+    RUN_EVERY_MINS = 120 # every 2 hours
+
+    schedule = Schedule(run_every_mins=RUN_EVERY_MINS)
+    code = 'my_app.my_cron_job'    # a unique code
+
+    def do(self):
+        pass    # do your thing here
 
 developed on Ubuntu 22.04
 
@@ -28,6 +37,14 @@ postgres setup
     \c monitdjdb
     monitdjdb=# alter default privileges grant all on tables to monitdj;
 
+
+## Crontab
+
+MonitDJ uses a cron that updates all hosts and service Active field to False if the host or service hasnt checked in over a minute.
+
+    ./manage.py crontab add
+    
+
 ## Components
 
 - bootstrap version 5.2.3
@@ -43,6 +60,8 @@ postgres setup
     manage.py startapp main
     manage.py migrate
     ./manage.py collectstatic --noinput (creates static_pub directory for serving js/css/img)
+
+
 
 
 ## Prod deploy

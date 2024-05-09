@@ -4,8 +4,12 @@ from django.views.decorators.csrf import csrf_exempt, csrf_protect
 from django.conf import settings
 from django.db.models import Q, Count
 from django.urls import reverse
+from django.utils import timezone
 from django.views.decorators.cache import cache_page
 import datetime
+
+
+
 from loguru import logger
 from .models import Service, Host
 from .utils import show_queryset, show_object, bytesto
@@ -13,43 +17,14 @@ from .utils import show_queryset, show_object, bytesto
 #def index(request):
     #return render(request, "index.html")
 
-
-
-def dashboard2(request):
-    logger.debug("DASHBOARD")
-    ts = datetime.datetime.now()
-    last_min = datetime.datetime.now() - datetime.timedelta(seconds=60)
-    #warning = Host.objects.annotate(nonzero=Count("service", filter=~Q(service__status=0))) \
-        #.filter(last_checkin__gt=current_dt).order_by("name").prefetch_related("service").filter(nonzero__gt=0).distinct()
-    
-    #allhosts = Host.objects.annotate(nonzero=Count("service")).prefetch_related("service").filter(nonzero__gt=0).distinct().order_by("name")
-
-
-#.filter(service__monitor=1) \
-
-    ## all hosts and their services (both up, down, host unreachable, etc)
-    allhosts = Host.objects.filter(last_checkin__gt=last_min).prefetch_related("service") \
-        .filter(service__last_modified__gt=last_min) \
-        .annotate(svc_ok=Count("service", filter=Q(service__status=0))) \
-        .annotate(svc_count=Count("service")) \
-        .order_by("name").distinct()
-
-    ## only hosts with services that have problems
-    #warning = allhosts.annotate(nonzero=Count("service", filter=~Q(service__status=0))).order_by("name").filter(nonzero__gt=0).filter(service__last_modified__gt=current_dt).distinct()
-    
-    ## only hosts that are not responsive
-    noresp = Host.objects.filter(last_checkin__lt=last_min)
-
-    context = {"settings": settings, "noresp": noresp, "allhosts": allhosts, "ts": ts, "last_min": last_min }
-
-    return render(request, "index2.html", context=context)
-
-
 #@cache_page(10*1)
+
+
 def dashboard(request):
     logger.debug("DASHBOARD")
-    ts = datetime.datetime.now()
-    last_min = datetime.datetime.now() - datetime.timedelta(seconds=60)
+    ts = timezone.now()
+    last_min = ts - datetime.timedelta(seconds=60)
+    logger.debug(f"X1 ts {ts}, last_min {last_min}")
     #warning = Host.objects.annotate(nonzero=Count("service", filter=~Q(service__status=0))) \
         #.filter(last_checkin__gt=current_dt).order_by("name").prefetch_related("service").filter(nonzero__gt=0).distinct()
     
@@ -57,15 +32,24 @@ def dashboard(request):
 
 
 #.filter(service__monitor=1) \
+    # sv = Service.objects.filter(last_checkin__gte=last_min)
+    # for s in sv:
+    #     logger.debug(s.name)
+    # logger.warning(sv)
+    # logger.warning(len(sv))
 
     ## all hosts and their services (both up, down, host unreachable, etc)
-    allhosts = Host.objects.filter(last_checkin__gt=last_min).prefetch_related("service") \
-        .filter(service__last_modified__gt=last_min) \
+    allhosts = Host.objects.filter(last_checkin__gte=last_min).prefetch_related("service") \
         .annotate(svc_ok=Count("service", filter=Q(service__status=0))) \
+        .annotate(svc_error=Count("service", filter=~Q(service__status=0))) \
         .annotate(svc_count=Count("service")) \
         .order_by("name").distinct()
-
-    ## only hosts with services that have problems
+    
+#    logger.warning(len(allhosts))
+    for host in allhosts:
+        logger.warning(host.service)
+        logger.warning(host.svc_error)
+  #  ## only hosts with services that have problems
     #warning = allhosts.annotate(nonzero=Count("service", filter=~Q(service__status=0))).order_by("name").filter(nonzero__gt=0).filter(service__last_modified__gt=current_dt).distinct()
     
     ## only hosts that are not responsive
@@ -129,10 +113,10 @@ def host_detail(request, monit_id):
     resp = """
     ok
     """
-    current_dt = datetime.datetime.now() - datetime.timedelta(seconds=60)
+    current_dt = timezone.now() - datetime.timedelta(seconds=60)
     host = Host.objects.get(pk=monit_id)
     logger.debug(host.service)
-    services = Service.objects.filter(host_id=monit_id).filter(last_modified__gt=current_dt).order_by("-status")
+    services = Service.objects.filter(host_id=monit_id).order_by("-status")
     logger.debug(services)
     memory = bytesto(host.mem, 'm')
     swap = bytesto(host.swap, 'm')
