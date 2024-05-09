@@ -42,6 +42,7 @@ postgres setup
     cd monitdj
     manage.py startapp main
     manage.py migrate
+    manage.py migrate --run-syncdb (create tables if missing)
     ./manage.py collectstatic --noinput (creates static_pub directory for serving js/css/img)
 
 

@@ -36,7 +36,7 @@ def save_host(monit_id, name, data):
         host.cpu = D(data, "monit.platform.cpu")
         host.mem = D(data, "monit.platform.memory")
         host.swap = D(data, "monit.platform.swap")
-        host.last_checkin = datetime.datetime.now()
+        #host.last_checkin = datetime.datetime.now()
         host.save()
     except Host.DoesNotExist:
         host = Host(
@@ -107,7 +107,7 @@ def test(request):
 
 @api.post("/collector")
 async def collector(request):
-    #logger.success(request.body)
+    logger.success(request.body)
     json_data = json.loads(json.dumps(xmltodict.parse(request.body)))
     #logger.info(json_data)
     monit_id = D(json_data, "monit.@id")

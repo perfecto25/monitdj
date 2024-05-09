@@ -14,7 +14,7 @@ SECRET_KEY = 'django-insecure-p==v1p#_l&weoi%c(oh_s0l-jw%v&3t086wxic3clim9tb@gy@
 DEBUG = True
 
 ALLOWED_HOSTS = ['localhost', '0.0.0.0', '192.168.30.14', '192.168.1.113', '192.168.56.1']
-
+#CSRF_TRUSTED_ORIGINS = ["http://localhost", "http://127.0.0.1"]
 
 # Application definition
 
@@ -34,7 +34,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
-    #'whitenoise.middleware.WhiteNoiseMiddleware', # for static file serving
+    # 'whitenoise.middleware.WhiteNoiseMiddleware', # for static file serving
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -42,7 +42,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    
+
 ]
 
 ROOT_URLCONF = 'monitdj.urls'
@@ -119,22 +119,20 @@ STATIC_ROOT = os.path.join(BASE_DIR, STATIC_URL)
 STATICFILES_DIRS = [os.path.join(BASE_DIR, 'main/static'),]
 
 
-
-
 # for Prod Deployment
 # STATIC_ROOT = os.path.join(BASE_DIR, 'static',)
 
 CACHES = {
-   "default": {
-       "BACKEND": "django.core.cache.backends.locmem.LocMemCache",
-       "LOCATION": "monit-data"
-   }
+    "default": {
+        "BACKEND": "django.core.cache.backends.locmem.LocMemCache",
+        "LOCATION": "monit-data"
+    }
 }
 
 INTERNAL_IPS = ["127.0.0.1"]
 DEBUG_TOOLBAR_CONFIG = {
     'RENDER_PANELS': True,
     'RESULTS_CACHE_SIZE': 100,
-    'RESULTS_STORE_SIZE': 30, # Required for ddt_request_history
+    'RESULTS_STORE_SIZE': 30,  # Required for ddt_request_history
     'SHOW_TOOLBAR_CALLBACK': lambda request: True
 }
