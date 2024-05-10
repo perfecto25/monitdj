@@ -30,7 +30,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'debug_toolbar',
     "mathfilters",
-    "huey.contrib.djhuey"
+    #"huey.contrib.djhuey"
 ]
 
 
