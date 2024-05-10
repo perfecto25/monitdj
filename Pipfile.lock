@@ -1,11 +1,11 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "db3ee5ccbd8452af23c27e7edaead15fd246ebdf659da5ebbf9784bde96622be"
+            "sha256": "27f63b2348161b7af1f1ce9056c87febb8e4c364dbc01143bd2b92235fef0fda"
         },
         "pipfile-spec": 6,
         "requires": {
-            "python_version": "3.12"
+            "python_version": "3"
         },
         "sources": [
             {
@@ -69,7 +69,6 @@
                 "sha256:a3cee2b3d45745210c5b898af2917f310f44df746269fe09a93be28a0adc2a4b"
             ],
             "index": "pypi",
-            "markers": "python_version >= '3.8'",
             "version": "==24.2"
         },
         "django-debug-toolbar": {
@@ -78,7 +77,6 @@
                 "sha256:e09b7dcb8417b743234dfc57c95a7c1d1d87a88844abd13b4c5387f807b31bf6"
             ],
             "index": "pypi",
-            "markers": "python_version >= '3.8'",
             "version": "==4.3.0"
         },
         "django-mathfilters": {
@@ -95,7 +93,6 @@
                 "sha256:87bff046416a2653ed2fbef1408e101292bf8170684821bac82accfd73bef059"
             ],
             "index": "pypi",
-            "markers": "python_version >= '3.7'",
             "version": "==1.1.0"
         },
         "h11": {
@@ -119,7 +116,6 @@
                 "sha256:e671a53522515f34fd406340ee968cb9ecafbc4b36c679da03c18fd8d0bd51ac"
             ],
             "index": "pypi",
-            "markers": "python_version >= '3.5'",
             "version": "==0.7.2"
         },
         "pydantic": {
@@ -221,7 +217,6 @@
                 "sha256:ec31f2ed9675cc54c21ba854cfe0462e6faf1d83c8ce5944709db8a4700b9c61"
             ],
             "index": "pypi",
-            "markers": "python_version >= '3.7'",
             "version": "==5.0.4"
         },
         "sqlparse": {
@@ -246,7 +241,6 @@
                 "sha256:6a69214c0b6a087462412670b3ef21224fa48cae0e452b5883e8e8bdfdd11dd0"
             ],
             "index": "pypi",
-            "markers": "python_version >= '3.8'",
             "version": "==0.29.0"
         },
         "xmltodict": {
@@ -255,7 +249,6 @@
                 "sha256:aa89e8fd76320154a40d19a0df04a4695fb9dc5ba977cbb68ab3e4eb225e7852"
             ],
             "index": "pypi",
-            "markers": "python_version >= '3.4'",
             "version": "==0.13.0"
         }
     },

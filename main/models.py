@@ -16,18 +16,20 @@ class Host(models.Model):
     cpu = models.IntegerField(blank=True, null=True)
     mem = models.IntegerField(blank=True, null=True)
     swap = models.IntegerField(blank=True, null=True)
-    cycle = models.IntegerField(blank=True, null=True) # polling cycle in seconds
+    cycle = models.IntegerField(blank=True, null=True)  # polling cycle in seconds
     active = models.BooleanField(default=True)
-
-
+    approved = models.BooleanField(default=False)
+    
     def __unicode__(self):
-       return self.name
-    class Meta: 
+        return self.name
+
+    class Meta:
         constraints = [models.UniqueConstraint(fields=["monit_id"], name="unique_monit_id")]
 
 # class Alert(models.Model):
 #     agent = models.ForeignKey(Agent, on_delete=models.CASCADE, related_name="agent", blank=False, null=False, primary_key=False)
 #     service = models.CharField(blank=True, null=True, default="")
+
 
 class Service(models.Model):
     name = models.CharField(max_length=40, blank=False, null=False, default="", db_index=True)
@@ -41,12 +43,12 @@ class Service(models.Model):
     last_checkin = models.DateTimeField(default=timezone.now)
     ack = models.BooleanField(default=False)
     active = models.BooleanField(default=True)
+
     class Meta:
         constraints = [models.UniqueConstraint(fields=["name", "host"], name="unique_svc_name")]
 
     def __unicode__(self):
-       return self.name
-
+        return self.name
 
 
 # class NotificationSetting(models.Model):
@@ -57,16 +59,15 @@ class Service(models.Model):
 #     # 4th tier = per service
 
 # class Connector(models.Model):
-#     name = models.CharField 
+#     name = models.CharField
 #     connector_type = models.SelectField(choices=slack, email)
 #     state = active, inactive
 
 # class SlackConnector
 #     connector = foreign key to COnnnector
-#     webhook url = 
-#     channel_id = 
+#     webhook url =
+#     channel_id =
 
 # class EmailConnector
 #     connector = FK to connector
-#     from_address 
-    
+#     from_address
