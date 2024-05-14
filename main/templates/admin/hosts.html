@@ -5,31 +5,31 @@
 
 
 
-<h3>Host Admin</h3> 
+<h3>Admin > Hosts</h3> 
 
 <section>
-  <div class="row p-3">
-    <div class="col p-6">
-      {% if pending %}
-      <div class="badge bg-info m-3 p-3">pending approval</div>
-      
-      <table class="table table-bordered border-primary col-6 p-3">
-        <tr>
-          <th>monit ID</th>
-          <th>hostname</th>
-          <th>os</th>
-        </tr>
-      {% for host in pending %}
-        <tr>
-          <td>{{ host.monit_id }}</td>
-          <td>{{ host.name }}</td>
-          <td>{{ host.os_version }}</td>
-        </tr>
-      {% endfor %}
-      </table>
-      {% endif %}
-    </div>
+  {% if pending %}
+  <div class="fw-bold text-info p-3">pending approval</div>
+  <div class="row">
+    <div class="col-4">monit ID</div>
+    <div class="col-2">hostname</div>
+    <div class="col-2">os</div>
   </div>
+    
+  {% for host in pending %}
+  <div class="row p-2 border border-1 border-info">
+    <div class="col-4">{{ host.monit_id }}</div>
+    <div class="col-2">{{ host.name }}</div>
+    <div class="col-2">{{ host.os_version }}</div>
+    <div class="col">
+      <button class="m-3 btn btn-success">Approve</button>
+      <button class="btn btn-danger">Delete</button>
+    </div>
+
+  </div>
+  {% endfor %}
+
+  {% endif %}
 </section>
 
 
