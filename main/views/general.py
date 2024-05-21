@@ -60,21 +60,18 @@ def dashboard(request):
 
 
 def index(request):
-
+    """ main DJ page """
     context = {"settings": settings}
-
     return render(request, "index.html", context=context)
 
 
 def ack_service(request, svc_id):
     """ acks incoming svc """
-
     svc = Service.objects.get(pk=svc_id)
     logger.warning(svc.state)
-
     if svc.ack == True:
         svc.ack = False
-        msg = "Ack"
+        msg = "Ack" 
         color = "primary"
     else:
         svc.ack = True

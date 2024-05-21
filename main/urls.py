@@ -16,7 +16,8 @@ urlpatterns = [
     path("ack/service/<int:svc_id>/", general.ack_service, name="ack_service"),
     path("host/detail/<uuid:monit_id>/", general.host_detail, name="host_detail"),
     path("host/delete/<uuid:monit_id>/", general.host_delete, name="host_delete"),
-    path("admin/hosts/", admin.hosts, name="admin_hosts")
+    path("main/admin/hosts/", admin.hosts, name="admin_hosts"),
+    path("main/admin/approve_host/<uuid:monit_id>/", admin.approve_host, name="approve_host"),
 ]
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

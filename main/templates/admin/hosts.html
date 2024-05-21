@@ -17,12 +17,17 @@
   </div>
     
   {% for host in pending %}
-  <div class="row p-2 border border-1 border-info">
+  <div class="row p-2 border border-1 border-info" id="row_{{host.monit_id}}">
     <div class="col-4">{{ host.monit_id }}</div>
     <div class="col-2">{{ host.name }}</div>
     <div class="col-2">{{ host.os_version }}</div>
     <div class="col">
-      <button class="m-3 btn btn-success">Approve</button>
+      <div class="m-3 btn btn-success"
+        hx-get="{% url 'approve_host' monit_id=host.monit_id %}"
+        hx-target="#row_{{host.monit_id}}"
+        hx-swap="OuterHTML"
+        hx-trigger="click"
+        >Approve</div>
       <button class="btn btn-danger">Delete</button>
     </div>
 
