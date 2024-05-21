@@ -10,8 +10,8 @@ import datetime
 
 
 from loguru import logger
-from .models import Service, Host
-from .utils import show_queryset, show_object, bytesto
+from main.models import Service, Host
+from main.utils import show_queryset, show_object, bytesto
 
 # def index(request):
 # return render(request, "index.html")
@@ -128,8 +128,3 @@ def host_detail(request, monit_id):
     return render(request, "modal/host.html", context=context)
 
 
-def admin_hosts(request):
-    pending = Host.objects.filter(active=True, approved=False)
-    allhosts = Host.objects.filter(approved=True)
-    context = {"pending": pending, "allhosts": allhosts}
-    return render(request, "admin/hosts.html", context=context)
