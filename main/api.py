@@ -24,7 +24,6 @@ api = NinjaAPI(csrf=False)
 
 @sync_to_async
 def save_host(monit_id, name, data):
-    logger.warning("SAVE HOST")
     try:
         host = Host.objects.get(pk=monit_id)
         host.state = 1

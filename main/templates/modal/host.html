@@ -4,6 +4,11 @@
   {% else %}
   <span class="badge text-bg-secondary">inactive</span>
   {% endif %}
+
+  {% if obj.ignore == 1 %}
+  <span class="badge text-bg-warning">Ignored</span>
+  {% endif %}
+
   <span class="badge text-bg-light-secondary">{{current_dt}}</span>
   </div>
   
@@ -31,9 +36,9 @@
       {% for svc in services %}
       
         {% if svc.status != 0 %}
-          <li><i class="bi bi-circle-fill redlight"></i> {{ svc.name }} {{ svc.event }}</li>
+          <li><i class="bi bi-circle-fill redtext"></i> {{ svc.name }} {{ svc.event }}</li>
         {% else %}
-          <li><i class="bi bi-circle-fill greenlight"></i> {{ svc.name }}</li>
+          <li><i class="bi bi-circle-fill greentext"></i> {{ svc.name }}</li>
         {% endif %}
       
       {% endfor %}
@@ -83,15 +88,33 @@
       <button type="button" 
         id="delete_agent" 
         class="btn btn-outline-danger" 
-        hx-get="{% url 'host_delete' monit_id=obj.monit_id %}" 
+        hx-get="{% url 'delete_host' monit_id=obj.monit_id %}" 
         hx-target=".host_detail" 
         hx-swap="outerHTML" 
         hx-confirm="Are you sure">
         Delete Host
       </button>
-
-      <button type="button" class="btn btn-outline-info">Freeze Host</button>
-
+      <br><br>
+      <div id="ignore">
+        {% if obj.ignore == 1 %}
+        <button type="button" 
+        class="btn btn-outline-primary" 
+        hx-get="{% url 'ignore_host' monit_id=obj.monit_id ignore=0 %}" 
+        hx-target="#ignore"
+        hx-swap="OuterHTML">
+        Observe Host
+        </button>
+        {% else %}
+        <button type="button"  
+        class="btn btn-outline-primary" 
+        hx-get="{% url 'ignore_host' monit_id=obj.monit_id ignore=1 %}" 
+        hx-target="#ignore"
+        hx-swap="OuterHTML">
+        Ignore Host
+        </button>
+        {% endif %}
+      </div>
+      
 
     </div>
     

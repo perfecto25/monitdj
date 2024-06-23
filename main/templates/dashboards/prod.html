@@ -9,7 +9,10 @@
     <div class="p-3 rounded">
      
       {% for host in allhosts %}
+      
+      
       <div class="row p-3 bg-body rounded mb-1">
+      
         <div class="col">
             <div class="btn btn-sm btn-outline-info"
               hx-get="{% url 'host_detail' monit_id=host.monit_id %}"
@@ -21,10 +24,14 @@
             </div>
             
             <div class="mt-3 badge">
-              <span class="redlight">{{host.svc_error}}</span> /
+              <span class="redlight">{{host.svc_error}}</span>
               <span class="greenlight">{{host.svc_ok}}</span>
-              
             </div>
+
+            {% if host.ignore == 1 %}
+            <i class="bi bi-eye-slash-fill"></i>
+            {% endif %}
+
         </div>
         <div class="col-10">
         {% if host.service.all %}
@@ -34,7 +41,7 @@
               
               <div class="col-10">
                 {% if svc.status != 0 %}
-                <i class="bi bi-circle-fill redlight"></i> <b>{{ svc.name }}</b> {% if svc.event %}{{ svc.event }}{% endif %}
+                <i class="bi bi-circle-fill redtext"></i> <b>{{ svc.name }}</b> {% if svc.event %}{{ svc.event }}{% endif %}
                 {% else %}
                 <i class="bi bi-circle-fill greenlight"></i> {{ svc.name }}
                 {% endif %}
