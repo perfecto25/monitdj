@@ -16,9 +16,9 @@ urlpatterns = [
 
     path("ack/service/<int:svc_id>/", general.ack_service, name="ack_service"),
     path("host/detail/<uuid:monit_id>/", general.host_detail, name="host_detail"),
-    path("main/admin/hosts/", admin.get_hosts, name="get_hosts"),   
+    path("main/admin/hosts/", admin.get_hosts, name="get_hosts"),
     path("main/admin/host/action/", admin.host_action, name="host_action"),
-#    path("main/admin/hostgroup/", admin.get_hostgroups, name="get_hostgroups"),
+    path("main/admin/hostgroups/", admin.get_hostgroups, name="get_hostgroups"),
 
 ]
 

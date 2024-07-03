@@ -12,12 +12,7 @@
   <link rel="stylesheet" href="{% static 'css/monitdj.css' %}">
   <link rel="stylesheet" href="{% static 'css/bootstrap-icons.min.css' %}">
   <link rel="stylesheet" href="{% static 'css/bootstrap-table.min.css' %}">
-  <script>
-    document.body.addEventListener('htmx:configRequest', (event) => {
-      event.detail.headers['X-CSRFToken'] = '{{ csrf_token }}';
-    })
-  </script>
-  <script src="{% static 'assets/static/js/bootstrap-table.min.js' %}"></script>
+  
 </head>
 <body>
   <script src="{% static 'assets/static/js/initTheme.js' %}"></script>
@@ -34,6 +29,13 @@
       </div>
     </div>
 
+
+<script>
+  document.body.addEventListener('htmx:configRequest', (event) => {
+    event.detail.headers['X-CSRFToken'] = '{{ csrf_token }}';
+  })
+</script>
+<script src="{% static 'assets/static/js/bootstrap-table.min.js' %}"></script>
 <script src="{% static 'assets/static/js/components/dark.js' %}"></script>
 <script src="{% static 'assets/static/js/pages/horizontal-layout.js' %}"></script>
 <script src="{% static 'assets/extensions/perfect-scrollbar/perfect-scrollbar.min.js' %}"></script>

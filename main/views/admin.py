@@ -12,12 +12,16 @@ def get_hosts(request):
     context = {"pending": pending, "allhosts": allhosts}
     return render(request, "admin/hosts.html", context=context)
 
+
 def host_action(request):
     """ approve/delete/ignore a host """
     if request.method == "POST":
+        logger.debug(request.POST)
         action = dictor(request.POST, "action")
         monit_id = dictor(request.POST, "monit_id")
-        logger.debug(request.POST)
+        logger.warning(monit_id)
+        logger.warning(request.POST)
+
         if action == "approve":
             logger.info(f"approving host ID: {monit_id}")
             host = Host.objects.filter(pk=monit_id)
@@ -25,14 +29,20 @@ def host_action(request):
         if action == "delete":
             logger.info(f"deleting host ID: {monit_id}")
             Host.objects.filter(pk=monit_id).delete()
+            if dictor(request.POST, "source") == "htmx":
+                return HttpResponse("deleted")
         if action == "ignore":
             logger.info(f"ignoring host ID: {monit_id}")
-            Host.objects.filter(pk=monit_id).update(ignore=ignore)
+            Host.objects.filter(pk=monit_id).update(ignore=1)
+        if action == "monitor":
+            logger.info(f"monitoring host ID: {monit_id}")
+            Host.objects.filter(pk=monit_id).update(ignore=0)
         return redirect("get_hosts")
 
 
-def get_hostgroup(request):
+def get_hostgroups(request):
+    host_groups = HostGroup.objects.all()
     pending = Host.objects.filter(active=True, approved=False)
     allhosts = Host.objects.filter(approved=True).order_by('active', 'name')
-    context = {"pending": pending, "allhosts": allhosts}
-    return render(request, "admin/hosts.html", context=context)
+    context = {"host_groups": host_groups}
+    return render(request, "admin/hostgroups.html", context=context)

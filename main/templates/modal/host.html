@@ -84,38 +84,17 @@
   
     <!-- ADMIN -->
     <div class="tab-pane fade" id="pills-admin" role="tabpanel" aria-labelledby="pills-admin-tab" tabindex="0">
-    
       <button type="button" 
         id="delete_agent" 
         class="btn btn-outline-danger" 
-        hx-get="{% url 'delete_host' monit_id=obj.monit_id %}" 
-        hx-target=".host_detail" 
+        hx-post="{% url 'host_action' %}" 
+        hx-vals='{"action": "delete", "monit_id": "{{obj.monit_id}}", "source": "htmx" }'
+        hx-target="#pills-admin" 
         hx-swap="outerHTML" 
         hx-confirm="Are you sure">
         Delete Host
       </button>
       <br><br>
-      <div id="ignore">
-        {% if obj.ignore == 1 %}
-        <button type="button" 
-        class="btn btn-outline-primary" 
-        hx-get="{% url 'ignore_host' monit_id=obj.monit_id ignore=0 %}" 
-        hx-target="#ignore"
-        hx-swap="OuterHTML">
-        Observe Host
-        </button>
-        {% else %}
-        <button type="button"  
-        class="btn btn-outline-primary" 
-        hx-get="{% url 'ignore_host' monit_id=obj.monit_id ignore=1 %}" 
-        hx-target="#ignore"
-        hx-swap="OuterHTML">
-        Ignore Host
-        </button>
-        {% endif %}
-      </div>
-      
-
     </div>
     
     

@@ -30,6 +30,7 @@ class Host(models.Model):
 
 class HostGroup(models.Model):
     name = models.CharField(max_length=50, blank=False, null=False, primary_key=True)
+    description = models.CharField(max_length=100, blank=True, null=True)
     host = models.ManyToManyField(Host, db_index=True)
 
     def __unicode__(self):
