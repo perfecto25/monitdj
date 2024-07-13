@@ -12,89 +12,48 @@
 
 <div class="row">
   <div class="col mx-auto">
-    {% if allhosts %}
-    <form method="POST" action="{% url 'host_action' %}">
-    {% csrf_token %}
-    <h3>All Hosts</h3>
-      <table class="table table-hover" id="table" data-search="true" data-toggle="table">
-        <thead>
-          <tr>
-            <th data-sortable="true" scope="col">hostname</th>
-            <th scope="col">os</th>
-            <th data-sortable="true" scope="col">status</th>
-            <th scope="col">last checkin</th>
-            <th scope="col"></th>
-          </tr>
-        </thead>
-        <tbody id="hosts-table-body">
-          {% for host in allhosts %}
-          
-          <tr id="row_{{host.monit_id}}">
-            <td>{{host.name}}</td>
-            <td>{{host.os_name}} {{host.os_release}}</td>
-            {% if host.active == 1 %}
-            <td>
-              <span class="badge rounded-pill bg-success">active</span>
-            </td> 
-            {% else %}
-            <td class="bg-default">
-              inactive
-            </td> 
-            {% endif %}
-            <td>{{host.last_checkin}}</td>
-            <td>
-              <input type="hidden" name="monit_id" value="{{host.monit_id}}"/>
-              <div class="col m-2">
-                {% if host.ignore == 0 %}
-                <button class="btn btn-sm btn-info" type="submit" name="action" value="ignore">Ignore</button>
-                {% else %}
-                <button class="btn btn-sm btn-outline-info" type="submit" name="action" value="monitor">Monitor</button>
-                {% endif %}
-                &nbsp;
-                <button class="btn btn-sm btn-danger" type="submit" 
-                  name="action" value="delete" onclick="return confirm('Are you sure?')">Delete</button>              
-              </div>
-            </td>
-          </tr>
-          {% endfor %}    
-        </tbody>
-      </table>
+    {% if not host_groups %}
+    <div class="badge badge-warning">
+      No host groups found
+    </div>
+    <br>
+  
+    <a class="btn btn-sm btn-info" href="{% url 'hostgroup_create' %}">create new Host Group</a>
+    {% else %}
+
+    <h3>Host Groups</h3>
+    <a class="btn btn-sm btn-info float-end" href="{% url 'hostgroup_create' %}">create new Host Group</a>
+    <span class="p-3"></span>
+    
+    <div class="row">
+      <div class="col col-2 fw-bold">Name</div>
+      <div class="col col-2 fw-bold">Description</div>
+      <div class="col col-6 fw-bold">Hosts</div>
+      <div class="col col-2"></div>
+    </div>
+    {% for hg in host_groups %}
+    <div class="row border border-default p-2">
+      <div class="col col-2">{{ hg.name }} {{ hg.id }}</div>
+      <div class="col col-2">{{ hg.description }}</div>
+      <div class="col col-6">hosts</div>
+      <div class="col col-2">
+        <div class="btn btn-sm btn-outline-danger">Delete</div>
+        <div class="btn btn-sm btn-outline-primary"
+          hx-get="{% url 'hostgroup_edit' id=hg.id %}"
+          hx-target="#modal-body-area"
+          hx-swap="OuterHTML"
+          hx-trigger="click"
+          data-bs-toggle="modal" 
+          data-bs-title="edit - {{ hg.name }}" 
+          data-bs-target="#basemodal"  
+          data-bs-modalsize="modal-md">
+          Edit
+        </div>
+      </div>
+     </div>
+    {% endfor %}
     {% endif %}
-    </form>
   </div>  
 </div>
 
-<br>
-
-<div class="col mx-auto"> <!-- COL PENDING -->
-{% if pending %}
-  <form method="POST" action="{% url 'host_action' %}">
-  {% csrf_token %}
-  <div class="fw-bold h2 text-info">pending approval</div>
-  <div class="row header p-2">    
-    <div class="col-4 h4">monit ID</div>
-    <div class="col-2 h4">hostname</div>
-    <div class="col-2 h4">os</div>
-  </div>
-    
-  {% for host in pending %}
-    <div class="row p-2 border border-1 border-info">
-      <div class="col-4">{{ host.monit_id }}</div>
-      <div class="col-2">{{ host.name }}</div>
-      <div class="col-2">{{ host.os_version }}</div>
-      <input type="hidden" name="monit_id" value="{{host.monit_id}}"/>
-      <div class="col m-2">
-        <button class="btn btn-sm btn-success" type="submit" name="action" value="approve" name="abc" value="xxx">Approve</button>
-        &nbsp;
-        <button class="btn btn-sm btn-danger" type="submit" name="action" value="delete" onclick="return confirm('Are you sure?')">Delete</button>
-      </div>
-    </div>
-  
-  </div>
-  {% endfor %}
-  {% endif %}
-  </form>
-  </div> <!-- COL PENDING-->
-</div> <!-- ROW -->
-</form>
 {% endblock %}

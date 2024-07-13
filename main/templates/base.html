@@ -12,7 +12,8 @@
   <link rel="stylesheet" href="{% static 'css/monitdj.css' %}">
   <link rel="stylesheet" href="{% static 'css/bootstrap-icons.min.css' %}">
   <link rel="stylesheet" href="{% static 'css/bootstrap-table.min.css' %}">
-  
+ 
+
 </head>
 <body>
   <script src="{% static 'assets/static/js/initTheme.js' %}"></script>
@@ -29,21 +30,42 @@
       </div>
     </div>
 
+  {% include "modal/basemodal.html" %}
 
-<script>
-  document.body.addEventListener('htmx:configRequest', (event) => {
-    event.detail.headers['X-CSRFToken'] = '{{ csrf_token }}';
-  })
-</script>
-<script src="{% static 'assets/static/js/bootstrap-table.min.js' %}"></script>
-<script src="{% static 'assets/static/js/components/dark.js' %}"></script>
-<script src="{% static 'assets/static/js/pages/horizontal-layout.js' %}"></script>
-<script src="{% static 'assets/extensions/perfect-scrollbar/perfect-scrollbar.min.js' %}"></script>
-<script src="{% static 'assets/compiled/js/app.js' %}"></script>
-<!--<script src="{% static 'assets/extensions/apexcharts/apexcharts.min.js' %}"></script>-->
-<script src="{% static 'assets/static/js/pages/dashboard.js' %}"></script>
-<script src="{% static 'assets/static/js/htmx.1.9.6.js' %}"></script>
-<script src="{% static 'assets/static/js/hyperscript.js' %}"></script>
+    <script>
+      document.body.addEventListener('htmx:configRequest', (event) => {
+        event.detail.headers['X-CSRFToken'] = '{{ csrf_token }}';
+      })
+    </script>
 
-</body>
+    <script>
+      const basemodal = document.getElementById('basemodal')
+      basemodal.addEventListener('show.bs.modal', event => {
+        // Button that triggered the modal
+        const button = event.relatedTarget
+        // Extract info from data-bs-* attributes
+        const title = button.getAttribute('data-bs-title')
+        const modal_size = button.getAttribute('data-bs-modalsize')
+        const modal_title = basemodal.querySelector('.modal-title')
+        const modal_dialog = document.getElementById('modalDialog')
+        // regenerate modal size class + title
+        modal_title.textContent = title
+        modal_dialog.className = ''
+        modal_dialog.classList.add("modal-dialog")
+        modal_dialog.classList.add(modal_size)
+      })
+    </script>
+
+    <script src="{% static 'assets/static/js/bootstrap-table.min.js' %}"></script>
+    <script src="{% static 'assets/static/js/components/dark.js' %}"></script>
+    <script src="{% static 'assets/static/js/pages/horizontal-layout.js' %}"></script>
+    <script src="{% static 'assets/extensions/perfect-scrollbar/perfect-scrollbar.min.js' %}"></script>
+    <script src="{% static 'assets/compiled/js/app.js' %}"></script>
+    <!--<script src="{% static 'assets/extensions/apexcharts/apexcharts.min.js' %}"></script>-->
+    <script src="{% static 'assets/static/js/pages/dashboard.js' %}"></script>
+    <script src="{% static 'assets/static/js/htmx.1.9.6.js' %}"></script>
+    <script src="{% static 'assets/static/js/multi-swap.js' %}"></script>
+    <script src="{% static 'assets/static/js/hyperscript.js' %}"></script>
+
+  </body>
 </html>

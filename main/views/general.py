@@ -48,7 +48,6 @@ def index(request):
 def ack_service(request, svc_id):
     """ acks incoming svc """
     svc = Service.objects.get(pk=svc_id)
-
     if svc.ack == True:
         svc.ack = False
         msg = "Ack" 
@@ -60,7 +59,6 @@ def ack_service(request, svc_id):
     svc.save()
 
     if request.method == "GET":
-
         resp = f"""
         <button id='btn_{svc_id}'
         class='btn btn-{color} btn-sm agent-btn .ack_{svc.id}' 

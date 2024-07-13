@@ -29,12 +29,13 @@ class Host(models.Model):
 
 
 class HostGroup(models.Model):
-    name = models.CharField(max_length=50, blank=False, null=False, primary_key=True)
+    name = models.CharField(max_length=50, blank=False, null=False)
     description = models.CharField(max_length=100, blank=True, null=True)
-    host = models.ManyToManyField(Host, db_index=True)
+    host = models.ManyToManyField(Host, db_index=True, blank=True)
 
     def __unicode__(self):
         return self.name
+
     class Meta:
         constraints = [models.UniqueConstraint(fields=["name"], name="unique_hostgroup_name")]
 

@@ -7,9 +7,7 @@
  
   <div class="card p-2">
     <div class="p-3 rounded">
-     
       {% for host in allhosts %}
-      
       
       <div class="row p-3 bg-body rounded mb-1">
       
@@ -19,7 +17,10 @@
               hx-target="#modal-body-area"
               hx-swap="OuterHTML"
               hx-trigger="click"
-              data-bs-toggle="modal" data-bs-title="{{host.name}}" data-bs-target="#basemodal"  data-bs-modalsize="modal-xl">
+              data-bs-toggle="modal" 
+              data-bs-title="{{host.name}}" 
+              data-bs-target="#basemodal"  
+              data-bs-modalsize="modal-xl">
             {{host.name}}
             </div>
             
@@ -87,7 +88,10 @@
               hx-target="#modal-body-area"
               hx-swap="OuterHTML"
               hx-trigger="click"
-              data-bs-toggle="modal" data-bs-title="{{host.name}}" data-bs-target="#basemodal"  data-bs-modalsize="modal-xl">
+              data-bs-toggle="modal" 
+              data-bs-title="{{host.name}}" 
+              data-bs-target="#basemodal"  
+              data-bs-modalsize="modal-xl">
             {{host.name}}
             </div>
         </div>

@@ -18,7 +18,10 @@ urlpatterns = [
     path("host/detail/<uuid:monit_id>/", general.host_detail, name="host_detail"),
     path("main/admin/hosts/", admin.get_hosts, name="get_hosts"),
     path("main/admin/host/action/", admin.host_action, name="host_action"),
-    path("main/admin/hostgroups/", admin.get_hostgroups, name="get_hostgroups"),
+    path("main/admin/hostgroup/get", admin.hostgroup_get, name="hostgroup_get"),
+    path("main/admin/hostgroup/create", admin.hostgroup_create, name="hostgroup_create"),
+    path("main/admin/hostgroup/delete", admin.hostgroup_delete, name="hostgroup_delete"),
+    path("main/admin/hostgroup/edit/<int:id>/", admin.hostgroup_edit, name="hostgroup_edit"),
 
 ]
 
