@@ -123,11 +123,16 @@ def hostgroup_edit(request, id):
     if request.method == "POST":
         obj = HostGroup.objects.get(pk=id)
         form = HostGroupForm(request.POST, instance=obj)
-        logger.warning(type(form))
         if form.is_valid():
-            obj = form.save(commit=False)
+            obj = form.save(commit=True)
+            for h in request.POST.getlist('host'):
+                logger.warning(h)
+                obj.host.add(h)
+            #form.save_m2m()
+            
             for item in form:
-                logger.info(type(item))
+                logger.debug(item)
+
             logger.debug(obj)
             messages.success(request, "modified")
         else:
