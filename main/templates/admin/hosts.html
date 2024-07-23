@@ -11,8 +11,6 @@
   </ol>
 </nav>
 
-
-
 <div class="row">
   <div class="col mx-auto">
     {% if allhosts %}
@@ -75,9 +73,9 @@
   {% csrf_token %}
   <div class="fw-bold h2 text-info">pending approval</div>
   <div class="row header p-2">    
-    <div class="col-4 h4">monit ID</div>
-    <div class="col-2 h4">hostname</div>
-    <div class="col-2 h4">os</div>
+    <div class="col-4 fw-bold">monit ID</div>
+    <div class="col-2 fw-bold">hostname</div>
+    <div class="col-2 fw-bold">os</div>
   </div>
     
   {% for host in pending %}

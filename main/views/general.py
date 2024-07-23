@@ -33,9 +33,7 @@ def dashboard(request):
 
     # only hosts that are not responsive
     noresp = Host.objects.filter(active=False, approved=True)
-
     context = {"settings": settings, "noresp": noresp, "allhosts": allhosts, "ts": ts, "last_min": last_min}
-
     return render(request, "dashboard.html", context=context)
 
 

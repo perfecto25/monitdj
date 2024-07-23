@@ -7,6 +7,7 @@ class HostGroupForm(forms.ModelForm):
     description = forms.CharField(max_length=50, required=False)
     host = forms.MultipleChoiceField(
         required=False, widget=forms.CheckboxSelectMultiple)
+    
     class Meta:
         model = HostGroup
         fields = "__all__"
@@ -14,6 +15,7 @@ class HostGroupForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super(HostGroupForm, self).__init__(*args, **kwargs)
         choices = []
-        for i in Host.objects.all():
+        for i in Host.objects.filter(approved=True):
             choices.append((i.monit_id, i.name))
-        self.fields["host"].choices = (x.monit_id,x.name) for x in Host.objects.all() #choices
+        self.fields["host"].choices = choices
+        #(x.monit_id,x.name) for x in Host.objects.all() #choices

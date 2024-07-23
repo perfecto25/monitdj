@@ -1,7 +1,9 @@
+<div id="target_container">
 
 {% extends "base.html" %}
 {% load static %}
 {% block content %}
+{% include "../errors.html" %}
 
 <nav aria-label="breadcrumb">
   <ol class="breadcrumb">
@@ -31,13 +33,22 @@
       <div class="col col-6 fw-bold">Hosts</div>
       <div class="col col-2"></div>
     </div>
+    
+    <form method="POST" action="{% url 'hostgroup_delete' %}">
+    {% csrf_token %}
+
     {% for hg in host_groups %}
     <div class="row border border-default p-2">
-      <div class="col col-2">{{ hg.name }} {{ hg.id }}</div>
+      <div class="col col-2">{{ hg.name }}</div>
       <div class="col col-2">{{ hg.description }}</div>
       <div class="col col-6">hosts</div>
-      <div class="col col-2">
-        <div class="btn btn-sm btn-outline-danger">Delete</div>
+      <div class="col col-2">    
+        <input type="hidden" name="id" value="{{hg.id}}"/>
+        
+        <button class="btn btn-sm btn-danger" type="submit" 
+          name="action" value="delete" onclick="return confirm('Are you sure?')">Delete
+        </button>
+
         <div class="btn btn-sm btn-outline-primary"
           hx-get="{% url 'hostgroup_edit' id=hg.id %}"
           hx-target="#modal-body-area"
@@ -52,8 +63,11 @@
       </div>
      </div>
     {% endfor %}
+    </form>
+
     {% endif %}
   </div>  
 </div>
 
 {% endblock %}
+</div>

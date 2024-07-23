@@ -14,7 +14,7 @@
 
 {% if form %}
 <div class="row">
-  <div class="col mx-auto">
+  <div class="col col-lg-4 col-md-4 mx-auto">
     <form method="POST" action="{% url 'hostgroup_create' %}">
     {% csrf_token %}
     <h3>Create new Host Group</h3>      

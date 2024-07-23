@@ -1,6 +1,7 @@
 from loguru import logger
 from django.shortcuts import render, redirect
 from django.http import HttpResponse, JsonResponse
+from django.contrib import messages
 from main.models import Service, Host, HostGroup
 from main.forms import HostGroupForm
 from main.utils import show_queryset, show_object, bytesto
@@ -71,34 +72,46 @@ def host_action(request):
 
 
 def hostgroup_get(request):
+    """ return all Host Groups """
     host_groups = HostGroup.objects.all().order_by('name')
- #   pending = Host.objects.filter(active=True, approved=False)
- #   allhosts = Host.objects.filter(approved=True).order_by('active', 'name')
     context = {"host_groups": host_groups}
     return render(request, "admin/hostgroups.html", context=context)
 
 
 def hostgroup_create(request):
+    """ create a new Host Group """
     if request.method == "GET":
         form = HostGroupForm()
         context = {"form": form}
+        return render(request, "admin/hostgroup_new.html", context)
 
     if request.method == "POST":
         form = HostGroupForm(request.POST)
+        logger.debug(form)
         if form.is_valid():
             obj = form.save(commit=False)
             obj.save()
-            context = {"message": "Group created"}
+            messages.success(request, f"Host Group: {obj.name} created")
         else:
+            messages.error(request, f"Host Group errors: {form.errors.items()}")
             for key, error in list(form.errors.items()):
                 logger.error(key)
                 logger.error(error)
-            context= {"message" : "error"}
-    return render(request, "admin/hostgroup_new.html", context)
+        return redirect("hostgroup_get")
+    
 
 def hostgroup_delete(request):
     if request.method == "POST":
-        return HttpResponse("deleted")
+        try:
+            hgid = dictor(request.POST, "id", checknone=True)
+            hg = HostGroup.objects.filter(pk=hgid)
+            name = hg[0].name
+            hg.delete()
+            messages.success(request, f"HostGroup {name} Deleted.")
+        except Exception as ex:
+            messages.error(request, f"HostGroup {name} - error deleting: {ex} ")
+            logger.error(error)
+        return redirect("hostgroup_get")
 
 def hostgroup_edit(request, id):
     if request.method == "GET":
@@ -107,3 +120,18 @@ def hostgroup_edit(request, id):
         form = HostGroupForm(instance=obj)
         context = { "form": form, "id": id }
         return render(request, "admin/hostgroup_edit.html", context=context)
+    if request.method == "POST":
+        obj = HostGroup.objects.get(pk=id)
+        form = HostGroupForm(request.POST, instance=obj)
+        logger.warning(type(form))
+        if form.is_valid():
+            obj = form.save(commit=False)
+            for item in form:
+                logger.info(type(item))
+            logger.debug(obj)
+            messages.success(request, "modified")
+        else:
+            messages.error(request, form.errors)
+
+    
+        return redirect("hostgroup_get")

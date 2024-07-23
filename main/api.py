@@ -117,12 +117,9 @@ async def collector(request):
     json_data = json.loads(json.dumps(xmltodict.parse(request.body)))
     #logger.info(json_data)
     monit_id = D(json_data, "monit.@id")
-    logger.debug(monit_id)
     name = D(json_data, "monit.server.localhostname")
     # create new agent record if non existent
     host = await save_host(monit_id, name, json_data)
-    
-
     if D(json_data, "monit.services.service"):
         # delete all services that are not fresh for this agent ID
 #        service_names = D(json_data, "monit.services.service", search="@name")
