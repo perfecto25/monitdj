@@ -4,7 +4,7 @@ from django.utils import timezone
 
 class Host(models.Model):
     monit_id = models.UUIDField(primary_key=True, editable=False)
-    name = models.CharField(max_length=30, blank=True, null=True)
+    name = models.CharField(max_length=50, blank=True, null=True)
     state = models.IntegerField(blank=True, null=True)
     last_checkin = models.DateTimeField(default=timezone.now)
     monit_version = models.CharField(max_length=30, blank=True, null=True)
@@ -19,12 +19,25 @@ class Host(models.Model):
     cycle = models.IntegerField(blank=True, null=True)  # polling cycle in seconds
     active = models.BooleanField(default=True)
     approved = models.BooleanField(default=False)
-    
+    ignore = models.BooleanField(default=False)
+
     def __unicode__(self):
         return self.name
 
     class Meta:
         constraints = [models.UniqueConstraint(fields=["monit_id"], name="unique_monit_id")]
+
+
+class HostGroup(models.Model):
+    name = models.CharField(max_length=50, blank=False, null=False)
+    description = models.CharField(max_length=100, blank=True, null=True)
+    host = models.ManyToManyField(Host, db_index=True, blank=True)
+
+    def __unicode__(self):
+        return self.name
+
+    class Meta:
+        constraints = [models.UniqueConstraint(fields=["name"], name="unique_hostgroup_name")]
 
 # class Alert(models.Model):
 #     agent = models.ForeignKey(Agent, on_delete=models.CASCADE, related_name="agent", blank=False, null=False, primary_key=False)

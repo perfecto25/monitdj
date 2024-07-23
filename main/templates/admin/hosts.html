@@ -4,33 +4,98 @@
 {% block content %}
 
 
+<nav aria-label="breadcrumb">
+  <ol class="breadcrumb">
+    <li class="breadcrumb-item active" aria-current="page">Home</li>
+    <li class="breadcrumb-item active" aria-current="page">Hosts</li>
+  </ol>
+</nav>
 
-<h3>Admin > Hosts</h3> 
+<div class="row">
+  <div class="col mx-auto">
+    {% if allhosts %}
+    <form method="POST" action="{% url 'host_action' %}">
+    {% csrf_token %}
+    <h3>All Hosts</h3>
+      <table class="table table-hover" id="table" data-search="true" data-toggle="table">
+        <thead>
+          <tr>
+            <th data-sortable="true" scope="col">hostname</th>
+            <th scope="col">os</th>
+            <th data-sortable="true" scope="col">status</th>
+            <th scope="col">last checkin</th>
+            <th scope="col"></th>
+          </tr>
+        </thead>
+        <tbody id="hosts-table-body">
+          {% for host in allhosts %}
+          
+          <tr id="row_{{host.monit_id}}">
+            <td>{{host.name}}</td>
+            <td>{{host.os_name}} {{host.os_release}}</td>
+            {% if host.active == 1 %}
+            <td>
+              <span class="badge rounded-pill bg-success">active</span>
+            </td> 
+            {% else %}
+            <td class="bg-default">
+              inactive
+            </td> 
+            {% endif %}
+            <td>{{host.last_checkin}}</td>
+            <td>
+              <input type="hidden" name="monit_id" value="{{host.monit_id}}"/>
+              <div class="col m-2">
+                {% if host.ignore == 0 %}
+                <button class="btn btn-sm btn-info" type="submit" name="action" value="ignore">Ignore</button>
+                {% else %}
+                <button class="btn btn-sm btn-outline-info" type="submit" name="action" value="monitor">Monitor</button>
+                {% endif %}
+                &nbsp;
+                <button class="btn btn-sm btn-danger" type="submit" 
+                  name="action" value="delete" onclick="return confirm('Are you sure?')">Delete</button>              
+              </div>
+            </td>
+          </tr>
+          {% endfor %}    
+        </tbody>
+      </table>
+    {% endif %}
+    </form>
+  </div>  
+</div>
 
-<section>
-  {% if pending %}
-  <div class="fw-bold text-info p-3">pending approval</div>
-  <div class="row">
-    <div class="col-4">monit ID</div>
-    <div class="col-2">hostname</div>
-    <div class="col-2">os</div>
+<br>
+
+<div class="col mx-auto"> <!-- COL PENDING -->
+{% if pending %}
+  <form method="POST" action="{% url 'host_action' %}">
+  {% csrf_token %}
+  <div class="fw-bold h2 text-info">pending approval</div>
+  <div class="row header p-2">    
+    <div class="col-4 fw-bold">monit ID</div>
+    <div class="col-2 fw-bold">hostname</div>
+    <div class="col-2 fw-bold">os</div>
   </div>
     
   {% for host in pending %}
-  <div class="row p-2 border border-1 border-info">
-    <div class="col-4">{{ host.monit_id }}</div>
-    <div class="col-2">{{ host.name }}</div>
-    <div class="col-2">{{ host.os_version }}</div>
-    <div class="col">
-      <button class="m-3 btn btn-success">Approve</button>
-      <button class="btn btn-danger">Delete</button>
+    <div class="row p-2 border border-1 border-info">
+      <div class="col-4">{{ host.monit_id }}</div>
+      <div class="col-2">{{ host.name }}</div>
+      <div class="col-2">{{ host.os_version }}</div>
+      <input type="hidden" name="monit_id" value="{{host.monit_id}}"/>
+      <div class="col m-2">
+        <button class="btn btn-sm btn-success" type="submit" name="action" value="approve" name="abc" value="xxx">Approve</button>
+        &nbsp;
+        <button class="btn btn-sm btn-danger" type="submit" name="action" value="delete" onclick="return confirm('Are you sure?')">Delete</button>
+      </div>
     </div>
-
+  
   </div>
   {% endfor %}
-
   {% endif %}
-</section>
-
-
+  </form>
+  </div> <!-- COL PENDING-->
+</div> <!-- ROW -->
+</form>
 {% endblock %}

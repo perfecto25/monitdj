@@ -10,13 +10,19 @@ from main.api import api
 urlpatterns = [
 
     path("", general.index, name="index"),
+    path("index2/", general.index2, name="index2"),
     path("api/", api.urls),
     path("dashboard/", general.dashboard, name="dashboard"),
 
     path("ack/service/<int:svc_id>/", general.ack_service, name="ack_service"),
     path("host/detail/<uuid:monit_id>/", general.host_detail, name="host_detail"),
-    path("host/delete/<uuid:monit_id>/", general.host_delete, name="host_delete"),
-    path("admin/hosts/", admin.hosts, name="admin_hosts")
+    path("main/admin/hosts/", admin.get_hosts, name="get_hosts"),
+    path("main/admin/host/action/", admin.host_action, name="host_action"),
+    path("main/admin/hostgroup/get", admin.hostgroup_get, name="hostgroup_get"),
+    path("main/admin/hostgroup/create", admin.hostgroup_create, name="hostgroup_create"),
+    path("main/admin/hostgroup/delete/", admin.hostgroup_delete, name="hostgroup_delete"),
+    path("main/admin/hostgroup/edit/<int:id>/", admin.hostgroup_edit, name="hostgroup_edit"),
+
 ]
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

@@ -6,6 +6,7 @@ name = "pypi"
 [packages]
 loguru = "*"
 dictor = "*"
+django = "*"
 django-bootstrap-modal-forms = "*"
 django-bootstrap5 = "*"
 django-ninja = "*"

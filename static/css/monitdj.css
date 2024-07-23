@@ -1,0 +1,21 @@
+.redlight {
+  color: #fff;
+  background-color: rgb(255, 107, 70);
+  padding: 5px;
+}
+
+.redtext {
+  color: rgb(255, 107, 70);
+  padding: 5px;
+}
+
+.greenlight {
+  color: #FFF;
+  background-color: #49ac43;
+  padding: 5px;
+}
+
+.greentext {
+  color: #5ad454;
+  padding: 5px;
+}

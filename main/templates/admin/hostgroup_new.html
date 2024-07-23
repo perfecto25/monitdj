@@ -1,0 +1,36 @@
+
+{% extends "base.html" %}
+{% load static %}
+{% block content %}
+{% load django_bootstrap5 %}
+
+<nav aria-label="breadcrumb">
+  <ol class="breadcrumb">
+    <li class="breadcrumb-item">Home</li>
+    <li class="breadcrumb-item"><a href="{% url 'hostgroup_get' %}">Host Groups</a></li>
+    <li class="breadcrumb-item active" aria-current="page">New Hostgroup</li>
+  </ol>
+</nav>
+
+{% if form %}
+<div class="row">
+  <div class="col col-lg-4 col-md-4 mx-auto">
+    <form method="POST" action="{% url 'hostgroup_create' %}">
+    {% csrf_token %}
+    <h3>Create new Host Group</h3>      
+      {% bootstrap_field form.name show_label=False %}
+      {% bootstrap_field form.description show_label=False %}
+      <button class="btn btn-sm btn-primary" type="submit">Save</button>
+    </form>
+  </div>  
+</div>
+{% endif %}
+
+
+<br>
+{% if message %}
+{{ message }}
+{% endif %}
+
+
+{% endblock %}
