@@ -10,6 +10,9 @@
       <label class="col-form-label-sm">Name</label> {% bootstrap_field form.name show_label=False %}
       <label class="col-form-label-sm">Description</label> {% bootstrap_field form.description show_label=False %}
       <label class="col-form-label-sm">Hosts</label> {% bootstrap_field form.host show_label=False %}
+      {% for host in form.host %}
+        {{ host.name }}
+      {% endfor %}
       <button class="btn btn-sm btn-primary" type="submit">Save</button>
     </form>
   </div>  
