@@ -20,6 +20,7 @@ ALLOWED_HOSTS = ['localhost', '0.0.0.0', '192.168.30.14', '192.168.1.113', '192.
 
 INSTALLED_APPS = [
     'main',
+    'alerts',
     'django_bootstrap5',
     'bootstrap_modal_forms',
     'django.contrib.admin',
