@@ -9,10 +9,20 @@
       {% csrf_token %}      
       <label class="col-form-label-sm">Name</label> {% bootstrap_field form.name show_label=False %}
       <label class="col-form-label-sm">Description</label> {% bootstrap_field form.description show_label=False %}
-      <label class="col-form-label-sm">Hosts</label> {% bootstrap_field form.host show_label=False %}
-      {% for host in form.host %}
-        {{ host.name }}
+      <p>
+
+      <label class="col-form-label-sm">Hosts in this group:</label>
+      {% for host in all_hosts %}
+      <div class="form-check">
+        {% if host.monit_id in hosts_in_group %}
+        <input class="form-check-input" id="id_host_{{host.monit_id}}" type="checkbox" name="host" value="{{host.monit_id}}" checked>
+        {% else %}
+        <input class="form-check-input" id="id_host_{{host.monit_id}}" type="checkbox" name="host" value="{{host.monit_id}}">
+        {% endif %}
+        <label class="form-check-label" for="id_host_{{host.monit_id}}">{{host.name}}</label>
+      </div>
       {% endfor %}
+      <br>
       <button class="btn btn-sm btn-primary" type="submit">Save</button>
     </form>
   </div>  

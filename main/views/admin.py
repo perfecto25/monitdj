@@ -115,19 +115,29 @@ def hostgroup_delete(request):
 
 def hostgroup_edit(request, id):
     if request.method == "GET":
-        logger.info(id)
+        
         obj = HostGroup.objects.get(pk=id)
+        all_hosts = Host.objects.filter(approved=True)
+        hosts_in_group = list(obj.host.values_list("monit_id", flat=True))
+        logger.error(hosts_in_group)
+
         form = HostGroupForm(instance=obj)
-        context = { "form": form, "id": id }
+        logger.debug(hosts_in_group)
+        #logger.success(form.fields["host"])
+        for host in all_hosts:
+            logger.debug(host.monit_id)
+        context = { "form": form, "id": id, "hosts_in_group": hosts_in_group, "obj": obj, "all_hosts": all_hosts }
         return render(request, "admin/hostgroup_edit.html", context=context)
+    
     if request.method == "POST":
         obj = HostGroup.objects.get(pk=id)
         form = HostGroupForm(request.POST, instance=obj)
         if form.is_valid():
             obj = form.save(commit=True)
-            for h in request.POST.getlist('host'):
-                logger.warning(h)
-                obj.host.add(h)
+            obj.host.set(request.POST.getlist("host"))
+            #for h in request.POST.getlist('host'):
+            #    logger.warning(h)
+            #    obj.host.add(h)
             #form.save_m2m()
             
             for item in form:
