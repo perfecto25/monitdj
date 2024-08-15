@@ -2,7 +2,7 @@ from loguru import logger
 from django.shortcuts import render, redirect
 from django.http import HttpResponse, JsonResponse
 from django.contrib import messages
-from main.models import Service, Host, HostGroup
+from main.models import Service, Host, HostGroup, SlackConnector, EmailConnector
 from main.forms import HostGroupForm
 from main.utils import show_queryset, show_object, bytesto
 from asgiref.sync import sync_to_async
@@ -71,6 +71,8 @@ def host_action(request):
         return redirect("get_hosts")
 
 
+# HOSTGROUP
+
 def hostgroup_get(request):
     """ return all Host Groups """
     host_groups = HostGroup.objects.all().order_by('name')
@@ -98,7 +100,7 @@ def hostgroup_create(request):
                 logger.error(key)
                 logger.error(error)
         return redirect("hostgroup_get")
-    
+
 
 def hostgroup_delete(request):
     if request.method == "POST":
@@ -113,40 +115,31 @@ def hostgroup_delete(request):
             logger.error(error)
         return redirect("hostgroup_get")
 
+
 def hostgroup_edit(request, id):
     if request.method == "GET":
-        
         obj = HostGroup.objects.get(pk=id)
         all_hosts = Host.objects.filter(approved=True)
         hosts_in_group = list(obj.host.values_list("monit_id", flat=True))
-        logger.error(hosts_in_group)
-
         form = HostGroupForm(instance=obj)
-        logger.debug(hosts_in_group)
-        #logger.success(form.fields["host"])
-        for host in all_hosts:
-            logger.debug(host.monit_id)
-        context = { "form": form, "id": id, "hosts_in_group": hosts_in_group, "obj": obj, "all_hosts": all_hosts }
+        context = {"form": form, "id": id, "hosts_in_group": hosts_in_group, "obj": obj, "all_hosts": all_hosts}
         return render(request, "admin/hostgroup_edit.html", context=context)
-    
+
     if request.method == "POST":
         obj = HostGroup.objects.get(pk=id)
         form = HostGroupForm(request.POST, instance=obj)
         if form.is_valid():
             obj = form.save(commit=True)
             obj.host.set(request.POST.getlist("host"))
-            #for h in request.POST.getlist('host'):
-            #    logger.warning(h)
-            #    obj.host.add(h)
-            #form.save_m2m()
-            
-            for item in form:
-                logger.debug(item)
-
-            logger.debug(obj)
-            messages.success(request, "modified")
+            messages.success(request, f"HostGroup {obj.name} modified")
         else:
             messages.error(request, form.errors)
-
-    
         return redirect("hostgroup_get")
+
+
+# NOTIFICATIONS
+def connector_get(request):
+    """ return all Notification Connectors """
+    slack_connectors = HostGroup.objects.all().order_by('name')
+    context = {"host_groups": host_groups}
+    return render(request, "admin/.html", context=context)
