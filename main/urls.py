@@ -22,6 +22,7 @@ urlpatterns = [
     path("main/admin/hostgroup/create", admin.hostgroup_create, name="hostgroup_create"),
     path("main/admin/hostgroup/delete/", admin.hostgroup_delete, name="hostgroup_delete"),
     path("main/admin/hostgroup/edit/<int:id>/", admin.hostgroup_edit, name="hostgroup_edit"),
+    path("main/admin/notification/connector/get", admin.connector_get, name="connector_get"),
 
 ]
 

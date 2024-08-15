@@ -71,10 +71,25 @@ class Service(models.Model):
 #     # 3rd tier = per host
 #     # 4th tier = per service
 
-# class Connector(models.Model):
-#     name = models.CharField
-#     connector_type = models.SelectField(choices=slack, email)
-#     state = active, inactive
+class Connector(models.Model):
+    name = models.CharField(max_length=40, blank=False, null=False, db_index=True)
+    active = models.BooleanField(default=False) 
+    class Meta:
+        abstract = True 
+#        constraints = [models.UniqueConstraint(fields=["name"], name="unique_connector_name")]
+
+class SlackConnector(Connector):
+    webhook = models.CharField(max_length=500, blank=False, null=False)
+    class Meta:
+        constraints = [models.UniqueConstraint(fields=["name"], name="unique_slack_connector_name")]
+
+class EmailConnector(Connector):
+    smtp_server = models.CharField(max_length=50, blank=False, null=False)
+    smtp_port = models.IntegerField()
+    class Meta:
+        constraints = [models.UniqueConstraint(fields=["name"], name="unique_email_connector_name")]
+
+
 
 # class SlackConnector
 #     connector = foreign key to COnnnector
