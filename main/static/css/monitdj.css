@@ -19,3 +19,9 @@
   color: #5ad454;
   padding: 5px;
 }
+
+tr.htmx-swapping td {
+  opacity: 0;
+  transition: opacity 1s ease-out;
+}
+

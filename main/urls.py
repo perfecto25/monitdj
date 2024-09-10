@@ -20,10 +20,12 @@ urlpatterns = [
     path("main/admin/host/action/", admin.host_action, name="host_action"),
     path("main/admin/hostgroup/get", admin.hostgroup_get, name="hostgroup_get"),
     path("main/admin/hostgroup/create", admin.hostgroup_create, name="hostgroup_create"),
-    path("main/admin/hostgroup/delete/", admin.hostgroup_delete, name="hostgroup_delete"),
+    path("main/admin/hostgroup/delete/<int:id>", admin.hostgroup_delete, name="hostgroup_delete"),
     path("main/admin/hostgroup/edit/<int:id>/", admin.hostgroup_edit, name="hostgroup_edit"),
     path("main/admin/notification/connector/get", admin.connector_get, name="connector_get"),
-
+    path("main/admin/notification/connector/create/<str:connector_type>/", admin.connector_create, name="connector_create"),
+    path("main/admin/notification/connector/edit/<int:id>/", admin.connector_edit, name="connector_edit"),
+    path("main/admin/notification/connector/delete/<int:id>/", admin.connector_delete, name="connector_delete"),
 ]
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

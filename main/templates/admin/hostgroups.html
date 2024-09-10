@@ -34,22 +34,28 @@
       <div class="col col-2"></div>
     </div>
     
-    <form method="POST" action="{% url 'hostgroup_delete' %}">
+    <form>
     {% csrf_token %}
 
-    {% for hg in host_groups %}
-    <div class="row border border-default p-2">
-      <div class="col col-2">{{ hg.name }}</div>
-      <div class="col col-2">{{ hg.description }}</div>
-      <div class="col col-6">hosts</div>
-      <div class="col col-2">    
-        <input type="hidden" name="id" value="{{hg.id}}"/>
-        
-        <button class="btn btn-sm btn-danger" type="submit" 
-          name="action" value="delete" onclick="return confirm('Are you sure?')">Delete
-        </button>
 
-        <div class="btn btn-sm btn-outline-primary"
+    <table class="table">
+    {% for hg in host_groups %}
+    <tr>
+      <td class="col-2">{{ hg.name }}</td>
+      <td class="col-2">{{ hg.description }}</td>
+      <td class="col-6">hosts</td>
+      <td class="col col-2">
+        <button type="button"
+          id="delete_btn"
+          class="btn btn-sm btn-danger"
+          hx-delete="{% url 'hostgroup_delete' id=hg.id %}"
+          hx-target="closest tr"
+          hx-confirm="Are you sure you want to DELETE {{hg.name}}"
+          hx-swap="OuterHTML swap:1s" >
+          Delete
+        </button>
+        <button type="button" 
+          class="btn btn-sm btn-outline-primary"
           hx-get="{% url 'hostgroup_edit' id=hg.id %}"
           hx-target="#modal-body-area"
           hx-swap="OuterHTML"
@@ -60,10 +66,11 @@
           data-bs-modalsize="modal-md">
           Edit
         </div>
-      </div>
-     </div>
+      </td>
+    </tr>
     {% endfor %}
     </form>
+    </table>
 
     {% endif %}
   </div>  

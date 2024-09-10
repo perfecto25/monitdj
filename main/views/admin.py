@@ -3,7 +3,7 @@ from django.shortcuts import render, redirect
 from django.http import HttpResponse, JsonResponse
 from django.contrib import messages
 from main.models import Service, Host, HostGroup, SlackConnector, EmailConnector
-from main.forms import HostGroupForm
+from main.forms import HostGroupForm, SlackConnectorForm
 from main.utils import show_queryset, show_object, bytesto
 from asgiref.sync import sync_to_async
 from dictor import dictor
@@ -102,18 +102,15 @@ def hostgroup_create(request):
         return redirect("hostgroup_get")
 
 
-def hostgroup_delete(request):
-    if request.method == "POST":
+def hostgroup_delete(request, id):
+    if request.method == "DELETE":
         try:
-            hgid = dictor(request.POST, "id", checknone=True)
-            hg = HostGroup.objects.filter(pk=hgid)
+            hg = HostGroup.objects.filter(pk=id)
             name = hg[0].name
             hg.delete()
-            messages.success(request, f"HostGroup {name} Deleted.")
         except Exception as ex:
-            messages.error(request, f"HostGroup {name} - error deleting: {ex} ")
-            logger.error(error)
-        return redirect("hostgroup_get")
+            logger.error(ex)
+        return HttpResponse("")
 
 
 def hostgroup_edit(request, id):
@@ -140,6 +137,73 @@ def hostgroup_edit(request, id):
 # NOTIFICATIONS
 def connector_get(request):
     """ return all Notification Connectors """
-    slack_connectors = HostGroup.objects.all().order_by('name')
-    context = {"host_groups": host_groups}
-    return render(request, "admin/.html", context=context)
+    slack_connectors = SlackConnector.objects.all().order_by('name')
+    email_connectors = EmailConnector.objects.all().order_by('name')
+    context = {"slack_connectors": slack_connectors, "email_connectors": email_connectors}
+    return render(request, "admin/connectors.html", context=context)
+
+
+def connector_create(request, connector_type: str):
+    """ create new notification connector """
+    if request.method == "GET":
+        logger.warning(connector_type)
+        logger.warning(type(request))
+        if connector_type == "slack":
+            form = SlackConnectorForm()
+        context = {"form": form, "connector_type": connector_type}
+        return render(request, "admin/connector_new.html", context)
+
+    if request.method == "POST":
+        if connector_type == "slack":
+            form = SlackConnectorForm(request.POST)
+        logger.debug(form)
+        if form.is_valid():
+            obj = form.save(commit=False)
+            obj.save()
+            messages.success(request, f"Connector: {obj.name} created")
+        else:
+            messages.error(request, f"Connector create errors: {form.errors.items()}")
+            for key, error in list(form.errors.items()):
+                logger.error(key)
+                logger.error(error)
+        return redirect("connector_get")
+
+
+def connector_edit(request, id):
+    """ edits a given connector """
+
+    if request.method == "GET":
+        connector_type = request.GET.get("connector_type")
+        if connector_type == "slack":
+            obj = SlackConnector.objects.get(pk=id)
+            form = SlackConnectorForm(instance=obj)
+        context = {"form": form, "id": id, "obj": obj, "connector_type": connector_type}
+        return render(request, "admin/connector_edit.html", context=context)
+
+    if request.method == "POST":
+        connector_type = request.POST.get("connector_type")
+
+        if connector_type == "slack":
+            obj = SlackConnector.objects.get(pk=id)
+            form = SlackConnectorForm(request.POST, instance=obj)
+            logger.debug(form)
+
+            if form.is_valid():
+                obj = form.save(commit=True)
+                messages.success(request, f"Connector {obj.name} modified")
+            else:
+                messages.error(request, form.errors)
+        return redirect("connector_get")
+
+
+def connector_delete(request, id):
+    if request.method == "POST":
+        try:
+            obj = SlackConnector.objects.filter(pk=id)
+            name = obj[0].name
+            obj.delete()
+            messages.success(request, f"Connector {name} Deleted.")
+        except Exception as ex:
+            messages.error(request, f"Connector {name} - error deleting: {ex} ")
+            logger.error(error)
+        return redirect("connector_get")
