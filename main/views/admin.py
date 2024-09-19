@@ -75,9 +75,30 @@ def host_action(request):
 
 def hostgroup_get(request):
     """ return all Host Groups """
-    host_groups = HostGroup.objects.all().order_by('name')
+    host_groups = HostGroup.objects.all().prefetch_related("host").order_by('name')    
     context = {"host_groups": host_groups}
     return render(request, "admin/hostgroups.html", context=context)
+
+
+def hostgroup_edit(request, id):
+    if request.method == "GET":
+        obj = HostGroup.objects.get(pk=id)
+        all_hosts = Host.objects.filter(approved=True)
+        hosts_in_group = list(obj.host.values_list("monit_id", flat=True))
+        form = HostGroupForm(instance=obj)
+        context = {"form": form, "id": id, "hosts_in_group": hosts_in_group, "obj": obj, "all_hosts": all_hosts}
+        return render(request, "admin/hostgroup_edit.html", context=context)
+
+    if request.method == "POST":
+        obj = HostGroup.objects.get(pk=id)
+        form = HostGroupForm(request.POST, instance=obj)
+        if form.is_valid():
+            obj = form.save(commit=True)
+            obj.host.set(request.POST.getlist("host"))
+            messages.success(request, f"HostGroup {obj.name} modified")
+        else:
+            messages.error(request, form.errors)
+        return redirect("hostgroup_get")
 
 
 def hostgroup_create(request):
@@ -113,25 +134,6 @@ def hostgroup_delete(request, id):
         return HttpResponse("")
 
 
-def hostgroup_edit(request, id):
-    if request.method == "GET":
-        obj = HostGroup.objects.get(pk=id)
-        all_hosts = Host.objects.filter(approved=True)
-        hosts_in_group = list(obj.host.values_list("monit_id", flat=True))
-        form = HostGroupForm(instance=obj)
-        context = {"form": form, "id": id, "hosts_in_group": hosts_in_group, "obj": obj, "all_hosts": all_hosts}
-        return render(request, "admin/hostgroup_edit.html", context=context)
-
-    if request.method == "POST":
-        obj = HostGroup.objects.get(pk=id)
-        form = HostGroupForm(request.POST, instance=obj)
-        if form.is_valid():
-            obj = form.save(commit=True)
-            obj.host.set(request.POST.getlist("host"))
-            messages.success(request, f"HostGroup {obj.name} modified")
-        else:
-            messages.error(request, form.errors)
-        return redirect("hostgroup_get")
 
 
 # NOTIFICATIONS
@@ -199,6 +201,7 @@ def connector_edit(request, id):
 def connector_delete(request, id):
     if request.method == "POST":
         try:
+            logger.debug("DELETE")
             obj = SlackConnector.objects.filter(pk=id)
             name = obj[0].name
             obj.delete()

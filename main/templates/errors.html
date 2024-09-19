@@ -9,12 +9,15 @@
       {% elif message.level == 25 %}
       
       
-      <button _="on click transition opacity to 0 then remove me">
-        Fade & Remove
-        </button>
+   
 
 
-      <div _="on load transition opacity to 0 then remove me after 3 seconds" class="alert alert-success">{{ message }}</div>
+      <div _="on load 
+              wait 3 s
+              transition opacity to 0
+              remove me"
+               
+        class="alert alert-success">{{ message }} nnn </div>
       {% elif message.level == 30 %}
       <div class="alert alert-warning">{{ message }}</div>
       {% else %}
