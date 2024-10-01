@@ -2,7 +2,7 @@ from loguru import logger
 from django.shortcuts import render, redirect
 from django.http import HttpResponse, JsonResponse
 from django.contrib import messages
-from main.models import Service, Host, HostGroup, SlackConnector, EmailConnector
+from main.models import Service, Host, HostGroup, Connector
 from main.forms import HostGroupForm, SlackConnectorForm
 from main.utils import show_queryset, show_object, bytesto
 from asgiref.sync import sync_to_async
@@ -139,24 +139,26 @@ def hostgroup_delete(request, id):
 # NOTIFICATIONS
 def connector_get(request):
     """ return all Notification Connectors """
-    slack_connectors = SlackConnector.objects.all().order_by('name')
-    email_connectors = EmailConnector.objects.all().order_by('name')
-    context = {"slack_connectors": slack_connectors, "email_connectors": email_connectors}
+    connectors = Connector.objects.all()
+
+#    slack_connectors = SlackConnector.objects.all().order_by('name')
+#    email_connectors = EmailConnector.objects.all().order_by('name')
+    context = {"connectors": connectors }
     return render(request, "admin/connectors.html", context=context)
 
 
-def connector_create(request, connector_type: str):
+def connector_create(request, ctype: str):
     """ create new notification connector """
     if request.method == "GET":
-        logger.warning(connector_type)
+
         logger.warning(type(request))
-        if connector_type == "slack":
+        if ctype == "slack":
             form = SlackConnectorForm()
-        context = {"form": form, "connector_type": connector_type}
+        context = {"form": form, "ctype": ctype}
         return render(request, "admin/connector_new.html", context)
 
     if request.method == "POST":
-        if connector_type == "slack":
+        if ctype == "slack":
             form = SlackConnectorForm(request.POST)
         logger.debug(form)
         if form.is_valid():
@@ -175,34 +177,32 @@ def connector_edit(request, id):
     """ edits a given connector """
 
     if request.method == "GET":
-        connector_type = request.GET.get("connector_type")
-        if connector_type == "slack":
-            obj = SlackConnector.objects.get(pk=id)
+#        ctype = request.GET.get("ctype", None)
+#        if ctype == "slack":`
+        obj = Connector.objects.get(pk=id)
+        if obj.ctype == "slack":
             form = SlackConnectorForm(instance=obj)
-        context = {"form": form, "id": id, "obj": obj, "connector_type": connector_type}
+        context = {"form": form, "id": id, "obj": obj}
         return render(request, "admin/connector_edit.html", context=context)
 
     if request.method == "POST":
-        connector_type = request.POST.get("connector_type")
-
-        if connector_type == "slack":
-            obj = SlackConnector.objects.get(pk=id)
+        obj = Connector.objects.get(pk=id)
+        if obj.ctype == "slack":
             form = SlackConnectorForm(request.POST, instance=obj)
-            logger.debug(form)
 
-            if form.is_valid():
-                obj = form.save(commit=True)
-                messages.success(request, f"Connector {obj.name} modified")
-            else:
-                messages.error(request, form.errors)
-        return redirect("connector_get")
+        if form.is_valid():
+            obj = form.save(commit=True)
+            messages.success(request, f"Connector {obj.name} modified")
+        else:
+            messages.error(request, form.errors)
+    return redirect("connector_get")
 
 
 def connector_delete(request, id):
     if request.method == "POST":
         try:
             logger.debug("DELETE")
-            obj = SlackConnector.objects.filter(pk=id)
+            obj = Connector.objects.filter(pk=id)
             name = obj[0].name
             obj.delete()
             messages.success(request, f"Connector {name} Deleted.")

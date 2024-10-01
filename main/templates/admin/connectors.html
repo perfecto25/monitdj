@@ -15,17 +15,17 @@
 
 <div class="row">
   <div class="col mx-auto">
-    {% if not slack_connectors and not email_connectors %}
+    {% if not connectors %}
     <div class="p-3 fs-2 badge badge-warning">
       No Connectors found
     </div> 
     <br>
   
-    <a class="btn btn-sm btn-info" href="{% url 'connector_create' connector_type='slack' %}">create new Slack Connector</a>
+    <a class="btn btn-sm btn-info" href="{% url 'connector_create' ctype='slack' %}">create new Slack Connector</a>
     {% else %}
 
     <h3>Slack Connectors</h3>
-    <a class="btn btn-sm btn-info float-end" href="{% url 'connector_create' connector_type='slack' %}">create new Slack Connector</a>
+    <a class="btn btn-sm btn-info float-end" href="{% url 'connector_create' ctype='slack' %}">create new Slack Connector</a>
     <span class="p-3"></span>
     
     <div class="row">
@@ -34,47 +34,52 @@
       <div class="col fw-bold">Active</div>
     </div>
     
-    <form method="POST">
+
+
+  
+    <table class="table table-bordered">
     {% csrf_token %}
-    {% for c in slack_connectors %}
-    <div class="row border border-default p-2">
-      <div class="col">{{ c.name }}</div>
-      <div class="col">{{ c.webhook }}</div>
-      <div class="col">{{ c.active }}</div>
+      <tr>
+        <th>Name</th>
+        <th>Webhook</th>
+        <th>Active?</th>
+        <th></th>
+      </tr>
+      {% for c in connectors %}
+      <tr class="row_{{c.id}}">
+        <td>{{c.name}} {{c.id}}</td>
+        <td>{{c.webhook}}</td>
+        <td>{{c.active}}</td>
+        <td>  
+          <button class="btn btn-sm btn-outline-primary"
+            hx-get="{% url 'connector_edit' id=c.id %}"
+            hx-target="#modal-body-area"
+            hx-swap="OuterHTML"
+            hx-trigger="click"
+            hx-vals='{"ctype": "slack"}'
+            data-bs-toggle="modal" 
+            data-bs-title="edit - {{ c.name }}"
 
-      <div class="col">    
-        <input type="hidden" name="id" value="{{c.id}}"/>
-        <button class="btn btn-sm btn-danger" type="submit" 
-          name="action" value="delete" onclick="return confirm('Are you sure?')">Delete
-        </button>
-
-        <div class="btn btn-sm btn-outline-primary"
-          hx-get="{% url 'connector_edit' id=c.id %}"
-          hx-target="#modal-body-area"
-          hx-swap="OuterHTML"
-          hx-trigger="click"
-          hx-vals='{"connector_type": "slack"}'
-          data-bs-toggle="modal" 
-          data-bs-title="edit - {{ c.name }}" 
-          data-bs-target="#basemodal"  
-          data-bs-modalsize="modal-md">
-          Edit
-        </div>
-        <div class="btn btn-sm btn-outline-primary"
-          hx-post="{% url 'connector_delete' id=c.id %}"
-          hx-target="#modal-body-area"
-          hx-swap="OuterHTML"
-          hx-trigger="click"
-          data-bs-toggle="modal" 
-          data-bs-title="delete - {{ c.name }}" 
-          data-bs-target="#basemodal"  
-          data-bs-modalsize="modal-md">
-          Deletexx
-        </div>
-      </div>
-     </div>
+            data-bs-target="#basemodal"  
+            data-bs-modalsize="modal-md">
+            Edit
+          </button>
+          <button class="btn btn-sm btn-outline-danger"
+            hx-post="{% url 'connector_delete' id=c.id %}"
+            hx-target="#modal-body-area"
+            hx-swap="OuterHTML"
+            hx-trigger="click"
+            hx-confirm="Are you sure"
+            data-bs-toggle="modal" 
+            data-bs-title="delete - {{ c.name }}" 
+            data-bs-target=".row_{{c.id}}"  
+            data-bs-modalsize="modal-md">
+            Delete
+          </button>
+        </td>
+      </tr>
     {% endfor %}
-    </form>
+  </table>
 
     {% endif %}
   </div>  

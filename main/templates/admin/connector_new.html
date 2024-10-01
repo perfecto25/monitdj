@@ -15,9 +15,9 @@
 {% if form %}
 <div class="row">
   <div class="col col-lg-4 col-md-4 mx-auto">
-    <form method="POST" action="{% url 'connector_create' connector_type=connector_type %}">
+    <form method="POST" action="{% url 'connector_create' ctype=ctype %}">
       {% csrf_token %}
-      <h3>Create new {{connector_type}} Connector</h3>      
+      <h3>Create new {{ctype}} Connector</h3>      
        {% bootstrap_form form %}
         <button class="btn btn-sm btn-primary float-end" type="submit">Save</button>
     </form>
