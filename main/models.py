@@ -32,7 +32,7 @@ class HostGroup(models.Model):
     name = models.CharField(max_length=50, blank=False, null=False)
     description = models.CharField(max_length=100, blank=True, null=True)
     host = models.ManyToManyField(Host, blank=True)
-    connectors = models.ManyToManyField()
+    #connectors = models.ManyToManyField()
 
     def __unicode__(self):
         return self.name
@@ -73,24 +73,15 @@ class Service(models.Model):
 #     # 4th tier = per service
 
 
-class SlackConnector(models.Model):
+class Connector(models.Model):
     name = models.CharField(max_length=40, blank=False, null=False, db_index=True)
+    ctype = models.CharField(max_length=25, blank=False, null=False, default="slack", db_index=True, choices=[("slack", "slack"), ("email", "email")])
     active = models.BooleanField(default=False)
-    webhook = models.CharField(max_length=500, blank=False, null=False)
-
+    webhook = models.CharField(max_length=500, blank=True, null=True)
+    smtp_server = models.CharField(max_length=50, blank=True, null=True)
+    smtp_port = models.IntegerField(blank=True, null=True)
     class Meta:
-        constraints = [models.UniqueConstraint(fields=["name"], name="unique_slack_connector_name")]
-
-
-class EmailConnector(models.Model):
-    name = models.CharField(max_length=40, blank=False, null=False, db_index=True)
-    active = models.BooleanField(default=False)
-    smtp_server = models.CharField(max_length=50, blank=False, null=False)
-    smtp_port = models.IntegerField()
-
-    class Meta:
-        constraints = [models.UniqueConstraint(fields=["name"], name="unique_email_connector_name")]
-
+        constraints = [models.UniqueConstraint(fields=["name"], name="unique_connector_name")]
 
 # class SlackConnector
 #     connector = foreign key to COnnnector

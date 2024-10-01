@@ -1,5 +1,5 @@
 from django import forms
-from .models import HostGroup, Host, SlackConnector
+from .models import HostGroup, Host, Connector
 from loguru import logger
 
 
@@ -19,5 +19,5 @@ class HostGroupForm(forms.ModelForm):
 
 class SlackConnectorForm(forms.ModelForm):
     class Meta:
-        model = SlackConnector
+        model = Connector
         fields = {"name", "webhook", "active"}

@@ -7,7 +7,7 @@
   <div class="col mx-auto">
     <form method="POST" action="{% url 'connector_edit' id=id %}">
       {% csrf_token %}
-      <input type="hidden" name="connector_type" value="{{connector_type}}">      
+      <input type="hidden" name="ctype" value="{{ctype}}">      
       <label class="col-form-label-sm">Channel Name</label> {% bootstrap_field form.name show_label=False %}
       <label class="col-form-label-sm">Active</label> {% bootstrap_field form.active show_label=False %}
       <label class="col-form-label-sm">Webhook URL</label> {% bootstrap_field form.webhook show_label=False %}
