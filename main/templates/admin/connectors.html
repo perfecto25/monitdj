@@ -26,31 +26,22 @@
 
     <h3>Slack Connectors</h3>
     <a class="btn btn-sm btn-info float-end" href="{% url 'connector_create' ctype='slack' %}">create new Slack Connector</a>
-    <span class="p-3"></span>
-    
-    <div class="row">
-      <div class="col col-2 fw-bold">Channel Name</div>
-      <div class="col col-2 fw-bold">Webhook URL</div>
-      <div class="col fw-bold">Active</div>
-    </div>
-    
-
-
-  
-    <table class="table table-bordered">
+    <br>
+    <br>  
+    <table class="table table-bordered p-1">
     {% csrf_token %}
       <tr>
-        <th>Name</th>
-        <th>Webhook</th>
-        <th>Active?</th>
+        <th class="bg-purple">Name</th>
+        <th class="bg-purple">Webhook</th>
+        <th class="bg-purple">Active?</th>
         <th></th>
       </tr>
       {% for c in connectors %}
-      <tr class="row_{{c.id}}">
+      <tr id="row_{{c.id}}">
         <td>{{c.name}} {{c.id}}</td>
         <td>{{c.webhook}}</td>
         <td>{{c.active}}</td>
-        <td>  
+        <td class="col col-2">  
           <button class="btn btn-sm btn-outline-primary"
             hx-get="{% url 'connector_edit' id=c.id %}"
             hx-target="#modal-body-area"
@@ -59,21 +50,17 @@
             hx-vals='{"ctype": "slack"}'
             data-bs-toggle="modal" 
             data-bs-title="edit - {{ c.name }}"
-
             data-bs-target="#basemodal"  
             data-bs-modalsize="modal-md">
             Edit
           </button>
           <button class="btn btn-sm btn-outline-danger"
             hx-post="{% url 'connector_delete' id=c.id %}"
-            hx-target="#modal-body-area"
-            hx-swap="OuterHTML"
+            hx-target="#row_{{c.id}}"
+            hx-swap="outerHTML"
             hx-trigger="click"
             hx-confirm="Are you sure"
-            data-bs-toggle="modal" 
-            data-bs-title="delete - {{ c.name }}" 
-            data-bs-target=".row_{{c.id}}"  
-            data-bs-modalsize="modal-md">
+            >
             Delete
           </button>
         </td>

@@ -10,8 +10,13 @@
       <label class="col-form-label-sm">Name</label> {% bootstrap_field form.name show_label=False %}
       <label class="col-form-label-sm">Description</label> {% bootstrap_field form.description show_label=False %}
       <p>
+      
+      {% if not all_hosts %}
+        <label class="col-form-label-sm p-3">No hosts available to add to this group.</label>
+      {% else %}
+        <label class="col-form-label-sm p-3">Hosts in this group:</label>
+      {% endif %}
 
-      <label class="col-form-label-sm">Hosts in this group:</label>
       {% for host in all_hosts %}
       <div class="form-check">
         {% if host.monit_id in hosts_in_group %}

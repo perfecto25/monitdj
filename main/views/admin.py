@@ -205,8 +205,7 @@ def connector_delete(request, id):
             obj = Connector.objects.filter(pk=id)
             name = obj[0].name
             obj.delete()
-            messages.success(request, f"Connector {name} Deleted.")
         except Exception as ex:
             messages.error(request, f"Connector {name} - error deleting: {ex} ")
             logger.error(error)
-        return redirect("connector_get")
+        return HttpResponse("")
