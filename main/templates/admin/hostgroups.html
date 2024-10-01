@@ -32,9 +32,9 @@
     {% csrf_token %}
     <table class="table table-bordered">
       <tr>
-        <th>Name</th>
-        <th>Desc</th>
-        <th>hosts</th>
+        <th class="bg-purple">Name</th>
+        <th class="bg-purple">Desc</th>
+        <th class="bg-purple">hosts</th>
         <th></th>
       </tr>
       {% for hg in host_groups %}
@@ -51,15 +51,7 @@
           {% endif %}
          </td>
         <td class="col col-2">
-          <button type="button"
-            id="delete_btn"
-            class="btn btn-sm btn-danger"
-            hx-delete="{% url 'hostgroup_delete' id=hg.id %}"
-            hx-target="closest tr"
-            hx-confirm="Are you sure you want to DELETE {{hg.name}}"
-            hx-swap="OuterHTML swap:1s" >
-            Delete
-          </button>
+
           <button type="button" 
             class="btn btn-sm btn-outline-primary"
             hx-get="{% url 'hostgroup_edit' id=hg.id %}"
@@ -71,7 +63,16 @@
             data-bs-target="#basemodal"  
             data-bs-modalsize="modal-md">
             Edit
-          </div>
+          </button>
+          <button type="button"
+            id="delete_btn"
+            class="btn btn-sm btn-outline-danger"
+            hx-delete="{% url 'hostgroup_delete' id=hg.id %}"
+            hx-target="closest tr"
+            hx-confirm="Are you sure you want to DELETE {{hg.name}}"
+            hx-swap="OuterHTML swap:1s" >
+            Delete
+          </button>
         </td>
       </tr>
     {% endfor %}

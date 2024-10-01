@@ -53,12 +53,17 @@ MonitDJ uses a cron that updates all hosts and service Active field to False if 
 ## Developing
 
 ### initial setup of project
-
-    python3.11 -m pip install django
-    django-admin startproject monitdj
+    
+    # install UV
+    curl -LsSf https://astral.sh/uv/install.sh | sh
     cd monitdj
-    manage.py startapp main
-    manage.py migrate
+    uv venv
+    uv pip install -r requirements.txt
+    source .venv/bin/activate
+    ./manage.py runserver
+
+
+    
     ./manage.py collectstatic --noinput (creates static_pub directory for serving js/css/img)
 
 
@@ -123,3 +128,6 @@ each connector is separate py file that handles notification logic
 ie slack is API handler, takes slack webhook URL and sends request
 
 
+### To do
+
+- add block button to Hosts page, if agent keeps trying to re-connect and get approval (block button adds agent monit id to a blocklist)

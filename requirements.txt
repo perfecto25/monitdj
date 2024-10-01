@@ -1,0 +1,11 @@
+loguru
+dictor
+django
+django-bootstrap-modal-forms
+django-bootstrap5
+django-ninja
+#psycopg2 = "*"
+uvicorn
+xmltodict
+django-debug-toolbar
+django-mathfilters
