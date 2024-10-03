@@ -65,6 +65,7 @@ def save_host(monit_id, name, data):
 
 @sync_to_async
 def save_svc(name, status, monitor, svc_data, svc_type, host):
+    logger.debug("save svc")
     # update or create a service record
     try:
         svc = Service.objects.get(name=name, host=host)
@@ -80,6 +81,7 @@ def save_svc(name, status, monitor, svc_data, svc_type, host):
 
 @sync_to_async
 def save_event(svc_name, event, state, host):
+    logger.debug("save event")
     logger.debug(svc_name)
     logger.debug(event)
     logger.debug(state)
@@ -115,7 +117,7 @@ def test(request):
 async def collector(request):
     #logger.success(request.body)
     json_data = json.loads(json.dumps(xmltodict.parse(request.body)))
-    #logger.info(json_data)
+    logger.info(json_data)
     monit_id = dictor(json_data, "monit.@id")
     name = dictor(json_data, "monit.server.localhostname")
     # create new agent record if non existent
