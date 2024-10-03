@@ -1,0 +1,76 @@
+<div id="target_container">
+
+{% extends "base.html" %}
+{% load static %}
+{% block content %}
+{% include "../errors.html" %}
+
+<nav aria-label="breadcrumb">
+  <ol class="breadcrumb">
+    <li class="breadcrumb-item" aria-current="page">Home</li>
+    <li class="breadcrumb-item" aria-current="page">Notifications</li>
+    <li class="breadcrumb-item active" aria-current="page">Notification Rules</li>
+  </ol>
+</nav>
+
+<div class="row">
+  <div class="col mx-auto">
+    {% if not rules %}
+    <div class="p-3 fs-2 badge badge-warning">
+      No Rules found
+    </div> 
+    <br>
+  
+    <a class="btn btn-sm btn-info" href="{% url 'connector_create' ctype='slack' %}">create new Notification rule</a>
+    {% else %}
+
+    <h3>Active rules</h3>
+    <a class="btn btn-sm btn-info float-end" href="{% url 'connector_create' ctype='slack' %}">create new Slack Connector</a>
+    <br>
+    <br>  
+    <table class="table table-bordered p-1">
+    {% csrf_token %}
+      <tr>
+        <th class="bg-purple">Name</th>
+        <th class="bg-purple">Webhook</th>
+        <th class="bg-purple">Active?</th>
+        <th></th>
+      </tr>
+      {% for rule in rules %}
+      <tr id="row_{}">
+        <td></td>
+        <td></td>
+        <td></td>
+        <td class="col col-2">  
+          <button class="btn btn-sm btn-outline-primary"
+            hx-get=""
+            hx-target="#modal-body-area"
+            hx-swap="OuterHTML"
+            hx-trigger="click"
+            hx-vals='{"ctype": "slack"}'
+            data-bs-toggle="modal" 
+            data-bs-title="edit - {}"
+            data-bs-target="#basemodal"  
+            data-bs-modalsize="modal-md">
+            Edit
+          </button>
+          <button class="btn btn-sm btn-outline-danger"
+            hx-post=""
+            hx-target="#row_}"
+            hx-swap="outerHTML"
+            hx-trigger="click"
+            hx-confirm="Are you sure"
+            >
+            Delete
+          </button>
+        </td>
+      </tr>
+    {% endfor %}
+  </table>
+
+    {% endif %}
+  </div>  
+</div>
+
+{% endblock %}
+</div>
