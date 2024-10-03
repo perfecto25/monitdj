@@ -26,6 +26,7 @@ urlpatterns = [
     path("main/admin/notification/connector/create/<str:ctype>/", admin.connector_create, name="connector_create"),
     path("main/admin/notification/connector/edit/<int:id>/", admin.connector_edit, name="connector_edit"),
     path("main/admin/notification/connector/delete/<int:id>/", admin.connector_delete, name="connector_delete"),
+    path("main/admin/notification/rules/get", admin.rules_get, name="rules_get"),
 ]
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

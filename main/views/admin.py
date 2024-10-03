@@ -139,12 +139,13 @@ def hostgroup_delete(request, id):
 # NOTIFICATIONS
 def connector_get(request):
     """ return all Notification Connectors """
-    connectors = Connector.objects.all()
+    if request.method == "GET":
+        connectors = Connector.objects.all()
 
 #    slack_connectors = SlackConnector.objects.all().order_by('name')
 #    email_connectors = EmailConnector.objects.all().order_by('name')
-    context = {"connectors": connectors }
-    return render(request, "admin/connectors.html", context=context)
+        context = {"connectors": connectors }
+        return render(request, "admin/connectors.html", context=context)
 
 
 def connector_create(request, ctype: str):
@@ -209,3 +210,10 @@ def connector_delete(request, id):
             messages.error(request, f"Connector {name} - error deleting: {ex} ")
             logger.error(error)
         return HttpResponse("")
+
+
+def rules_get(request):
+    if request.method == "GET":
+        rules = ["r1", "r2"]
+        context = {"rules": rules }
+        return render(request, "admin/rules.html", context=context)
