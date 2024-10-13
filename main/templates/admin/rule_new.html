@@ -7,24 +7,68 @@
 <nav aria-label="breadcrumb">
   <ol class="breadcrumb">
     <li class="breadcrumb-item">Home</li>
-    <li class="breadcrumb-item"><a href="{% url 'hostgroup_get' %}">Notification Rule</a></li>
-    <li class="breadcrumb-item active" aria-current="page">New Hostgroup</li>
+    <li class="breadcrumb-item"><a href="{% url 'rule_get' %}">Notification Rule</a></li>
+    <li class="breadcrumb-item active" aria-current="page">New Rule</li>
   </ol>
 </nav>
 
-{% if form %}
 <div class="row">
-  <div class="col col-lg-4 col-md-4 mx-auto">
-    <form method="POST" action="{% url 'hostgroup_create' %}">
-    {% csrf_token %}
-    <h3>Create new Host Group</h3>      
-      {% bootstrap_field form.name show_label=False %}
-      {% bootstrap_field form.description show_label=False %}
-      <button class="btn btn-sm btn-primary" type="submit">Save</button>
-    </form>
+  <div class="col col-lg-8 col-md-8 mx-auto">
+
+    <h3>Create new Notification Rule</h3>      
+    IF ANY <br>
+    <div class="bg-primary p-3">
+      <form>
+        <div class="row">
+          <div class="mb-3 col col-md-4">
+            <select id="sel_target_host_type" class="form-select" aria-label="Default select example">
+              <option selected>select Host</option>
+              <option value="1">Host</option>
+              <option value="2">HostGroup</option>
+            </select>
+          </div>
+          <div class="col col-md-4 float-end" id="response_target_host_type"></div>
+        add another
+        </div>
+        <div class="row">
+          <div class="mb-3 col col-md-4">
+            <select id="sel_target_svc_type" class="form-select" aria-label="Default select example">
+              <option selected>select Service</option>
+              <option value="1">Service</option>
+              <option value="2">ServiceGroup</option>
+            </select>
+          </div>
+          <div class="col col-md-4" id="response_target_svc_type"></div>
+        </div>
+      </form>
+    </div>
+
+
+    <br>
+    THEN <br>
+    
+    <div class="bg-warning p-3">
+      <form>
+        <div class="mb-3">
+          <label for="exampleInputEmail1" class="form-label">Ta`</label>
+          <input type="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp">
+          <div id="emailHelp" class="form-text">We'll never share your email with anyone else.</div>
+        </div>
+        <div class="mb-3">
+          <label for="exampleInputPassword1" class="form-label">Password</label>
+          <input type="password" class="form-control" id="exampleInputPassword1">
+        </div>
+        <div class="mb-3 form-check">
+          <input type="checkbox" class="form-check-input" id="exampleCheck1">
+          <label class="form-check-label" for="exampleCheck1">Check me out</label>
+        </div>
+        <button type="submit" class="btn btn-primary">Submit</button>
+      </form>
+    </div>
+
+
   </div>  
 </div>
-{% endif %}
 
 
 <br>
