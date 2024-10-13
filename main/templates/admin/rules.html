@@ -21,11 +21,11 @@
     </div> 
     <br>
   
-    <a class="btn btn-sm btn-info" href="{% url 'connector_create' ctype='slack' %}">create new Notification rule</a>
+    <a class="btn btn-sm btn-info" href="{% url 'rule_create' %}">create new Notification rule</a>
     {% else %}
 
     <h3>Active rules</h3>
-    <a class="btn btn-sm btn-info float-end" href="{% url 'connector_create' ctype='slack' %}">create new Notification Rule</a>
+    <a class="btn btn-sm btn-info float-end" href="{% url 'rule_create'  %}">create new Notification Rule</a>
     <br>
     <br>  
     <table class="table table-bordered p-1">

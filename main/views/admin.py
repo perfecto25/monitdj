@@ -212,8 +212,12 @@ def connector_delete(request, id):
         return HttpResponse("")
 
 
-def rules_get(request):
+def rule_get(request):
     if request.method == "GET":
         rules = ["r1", "r2"]
         context = {"rules": rules }
         return render(request, "admin/rules.html", context=context)
+
+def rule_create(request):
+    if request.method == "GET":
+        return render(request, "admin/rule_new.html")
