@@ -1,0 +1,15 @@
+<div class="col">
+  hold control to select multiple
+  <select id="sel_target_host" class="form-select" multiple>
+    {% for option in options %}
+    <option value="{{option.monit_id}}">{{option.name}}</option>
+    {% endfor %}
+  </select>
+</div>
+<div class="col">
+  hold control to select multiple
+  <select id="sel_target_condition" class="form-select" multiple>
+    <option value="failed">failed</option>
+    <option value="succeeded">succeeded</option>
+  </select>
+</div>

@@ -13,32 +13,33 @@
 </nav>
 
 <div class="row">
-  <div class="col col-lg-8 col-md-8 mx-auto">
+  <div class="col col-lg-6 col-md-6 mx-auto">
 
     <h3>Create new Notification Rule</h3>      
     IF ANY <br>
-    <div class="bg-primary p-3">
+    <div class="bg-primary p-3 rounded">
       <form>
         <div class="row">
-          <div class="mb-3 col col-md-4">
-            <select id="sel_target_host_type" class="form-select" aria-label="Default select example">
-              <option selected>select Host</option>
-              <option value="1">Host</option>
-              <option value="2">HostGroup</option>
+          <div class="mb-3 col col-lg-6 col-md-6">
+            <select id="sel_target_host_type" class="form-select"
+              hx-get="{% url 'rule_builder' %}?target=${this.value}"
+              hx-trigger="change"
+              hx-target="#response"
+              hx-include="this"
+              name="target"
+              >
+              <option selected>-- select object --</option>
+              <option value="host">Host</option>
+              <option value="hostgroup">HostGroup</option>
+              <option value="service">Service</option>
+              <option value="servicegroup">ServiceGroup</option>
             </select>
           </div>
-          <div class="col col-md-4 float-end" id="response_target_host_type"></div>
-        add another
         </div>
         <div class="row">
-          <div class="mb-3 col col-md-4">
-            <select id="sel_target_svc_type" class="form-select" aria-label="Default select example">
-              <option selected>select Service</option>
-              <option value="1">Service</option>
-              <option value="2">ServiceGroup</option>
-            </select>
+          <div class="mb-3 col col-lg-6 col-md-6" id="response">
+            
           </div>
-          <div class="col col-md-4" id="response_target_svc_type"></div>
         </div>
       </form>
     </div>

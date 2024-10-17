@@ -221,3 +221,18 @@ def rule_get(request):
 def rule_create(request):
     if request.method == "GET":
         return render(request, "admin/rule_new.html")
+
+def rule_builder(request):
+    if request.method == "GET":
+        target = request.GET.get("target")
+        logger.debug(target)
+        if target == "host":
+            qs = Host.objects.only("monit_id", "name")
+            context = {"options": qs}
+            return render(request, "admin/rule_new_options.html", context=context)
+        ret = '''
+            <select id="sel_target_host_type" class="form-select" aria-label="Default select example">
+              <option selected>Hosst</option>
+              </select>
+            '''
+        return HttpResponse(ret)

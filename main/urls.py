@@ -28,6 +28,7 @@ urlpatterns = [
     path("main/admin/notification/connector/delete/<int:id>/", admin.connector_delete, name="connector_delete"),
     path("main/admin/notification/rules/get", admin.rule_get, name="rule_get"),
     path("main/admin/notification/rules/create", admin.rule_create, name="rule_create"),
+    path("main/admin/notification/rules/builder", admin.rule_builder, name="rule_builder"),
 ]
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
