@@ -84,4 +84,3 @@ def host_detail(request, monit_id):
 #    return HttpResponse(monit_id)
     return render(request, "modal/host.html", context=context)
 
-
