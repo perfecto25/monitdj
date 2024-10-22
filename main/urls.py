@@ -29,6 +29,8 @@ urlpatterns = [
     path("main/admin/notification/rules/get", admin.rule_get, name="rule_get"),
     path("main/admin/notification/rules/create", admin.rule_create, name="rule_create"),
     path("main/admin/notification/rules/builder", admin.rule_builder, name="rule_builder"),
+    path("main/admin/notification/rules/process", admin.rule_process, name="rule_process"),
+
 ]
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

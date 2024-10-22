@@ -228,11 +228,24 @@ def rule_builder(request):
         logger.debug(target)
         if target == "host":
             qs = Host.objects.only("monit_id", "name")
-            context = {"options": qs}
-            return render(request, "admin/rule_new_options.html", context=context)
-        ret = '''
-            <select id="sel_target_host_type" class="form-select" aria-label="Default select example">
-              <option selected>Hosst</option>
-              </select>
-            '''
-        return HttpResponse(ret)
+            context = {"options": qs, "target_type": "host"}
+        if target == "hostgroup":
+            qs = HostGroup.objects.only("id", "name")
+            context = { "options": qs, "target_type": "hostgroup"}
+
+        return render(request, "admin/rule_new_options.html", context=context)
+        
+        #ret = '''
+        #    <select id="sel_target_host_type" class="form-select" aria-label="Default select example">
+        #      <option selected>Hosst</option>
+        #      </select>
+
+#        return HttpResponse(ret)
+
+
+def rule_process(request):
+    if request.method == "POST":
+        logger.debug(request)
+        target_type = request.POST.get("target_type")
+        logger.debug(target_type)
+        

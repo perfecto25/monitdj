@@ -1,11 +1,22 @@
 <div class="col">
   hold control to select multiple
+  {% if target_type == "host" %}
   <select id="sel_target_host" class="form-select" multiple>
     {% for option in options %}
     <option value="{{option.monit_id}}">{{option.name}}</option>
     {% endfor %}
   </select>
+  {% endif %}
+
+  {% if target_type == "hostgroup" %}
+  <select id="sel_target_hostgroup" class="form-select" multiple>
+    {% for option in options %}
+    <option value="{{option.id}}">{{option.name}}</option>
+    {% endfor %}
+  </select>
+  {% endif %}
 </div>
+
 <div class="col">
   hold control to select multiple
   <select id="sel_target_condition" class="form-select" multiple>
@@ -13,3 +24,5 @@
     <option value="succeeded">succeeded</option>
   </select>
 </div>
+
+<input type="hidden" name="target_type" value="{{target_type}}"> 
