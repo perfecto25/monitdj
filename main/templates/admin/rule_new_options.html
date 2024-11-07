@@ -1,12 +1,35 @@
 <div class="col">
-  hold control to select multiple
+
   {% if target_type == "host" %}
-  <select id="sel_target_host" class="form-select" multiple>
+  
+  <select id="sel_target_host" data-placeholder="xx" class="form-select" multiple>
     {% for option in options %}
     <option value="{{option.monit_id}}">{{option.name}}</option>
     {% endfor %}
   </select>
   {% endif %}
+
+
+
+
+  <select multiple _="on change
+  set selectedOptions to Array.from(my.selectedOptions)
+  for option in selectedOptions
+    if no <span.selected-option/> in me with textContent of option.textContent
+      append <span class='selected-option'>{option.textContent}</span> to me
+    end
+  end
+  for span in <span.selected-option/> in me
+    if no selectedOptions contains option with textContent of span.textContent
+      remove span
+    end
+  end">
+  <option value="1">Option 1</option>
+  <option value="2">Option 2</option>
+  <option value="3">Option 3</option>
+  <option value="4">Option 4</option>
+</select>
+
 
   {% if target_type == "hostgroup" %}
   <select id="sel_target_hostgroup" class="form-select" multiple>
@@ -26,3 +49,13 @@
 </div>
 
 <input type="hidden" name="target_type" value="{{target_type}}"> 
+
+
+<script>
+  $( '#sel_target_host' ).select2( {
+    theme: "bootstrap-5",
+    width: $( this ).data( 'width' ) ? $( this ).data( 'width' ) : $( this ).hasClass( 'w-100' ) ? '100%' : 'style',
+    placeholder: $( this ).data( 'placeholder' ),
+    closeOnSelect: false,
+} );
+</script>
